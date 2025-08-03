@@ -1,0 +1,23 @@
+{
+    "enabled": true,
+    "scale": 4,
+    "algorithm": "bezier",
+    "sharpen": true,
+    "enhance": true,
+    "cache": true,
+    "textures": {
+        "door": { "sharpen": true, "enhance": true },
+        "water": { "sharpen": false, "enhance": true, "waterEffect": true },
+        "water_animated": { "sharpen": false, "enhance": true, "waterEffect": true },
+        "gungywater": { "sharpen": false, "enhance": true, "waterEffect": true },
+        "wall": { "sharpen": true, "enhance": true },
+        "planks": { "sharpen": true, "enhance": true },
+        "bark": { "sharpen": true, "enhance": true },
+        "leafytree": { "sharpen": false, "enhance": true, "grassEffect": true },
+        "leafybase": { "sharpen": false, "enhance": true, "grassEffect": true },
+        "plant": { "sharpen": false, "enhance": true, "grassEffect": true },
+        "plant2": { "sharpen": false, "enhance": true, "grassEffect": true },
+        "rockwall": { "sharpen": true, "enhance": false },
+        "chainmail": { "sharpen": true, "enhance": false }
+    }
+}

@@ -4,6 +4,7 @@ import { Jimp } from 'jimp';
 import type { Bitmap } from 'jimp';
 
 import Packet from '#/io/Packet.js';
+import { textureUpscaler } from '#/util/TextureUpscaler.js';
 
 export function generatePixelOrder(img: { bitmap: Bitmap }) {
     let rowMajorScore = 0;
@@ -137,7 +138,7 @@ export async function convertImage(index: Packet, srcPath: string, safeName: str
     const data = Packet.alloc(4);
     data.p2(index.pos);
 
-    const img = await Jimp.read(`${srcPath}/${safeName}.png`);
+    const img = await textureUpscaler.upscaleTexture(`${srcPath}/${safeName}.png`);
     let tileX = img.bitmap.width;
     let tileY = img.bitmap.height;
 
