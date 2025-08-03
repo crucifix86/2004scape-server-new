@@ -1,15 +1,15 @@
 [loc_1532]
 model=model_loc_3
 active=no
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
 [loc_1535]
 model=model_loc_3
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -17,7 +17,7 @@ recol2d=11458
 [loc_1538]
 model=model_loc_3
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=elfdoor
 recol2s=6342
 recol2d=11458

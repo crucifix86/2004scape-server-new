@@ -16,11 +16,11 @@ rgb=0x888888
 
 [woodenfloor]
 overlay=yes
-texture=planks
+texture=new_planks
 
 [water]
 overlay=yes
-texture=water
+texture=new_water
 
 [gungywater]
 overlay=yes
@@ -108,7 +108,7 @@ texture=mossybricks
 
 [brick]
 overlay=yes
-texture=wall
+texture=new_wall
 
 [grass]
 overlay=yes
@@ -136,7 +136,7 @@ rgb=0x505050
 
 [woodenfloor_bridge]
 overlay=yes
-texture=planks
+texture=new_planks
 
 [mud5_overlay]
 overlay=yes
@@ -178,7 +178,7 @@ occlude=no
 
 [woodenfloor_no_occlude]
 overlay=yes
-texture=planks
+texture=new_planks
 occlude=no
 
 [oldbrick_no_occlude]
@@ -188,7 +188,7 @@ occlude=no
 
 [brick_no_occlude]
 overlay=yes
-texture=wall
+texture=new_wall
 occlude=no
 
 [desert_shadow]

@@ -159,7 +159,7 @@ model=model_loc_3
 sharelight=yes
 occlude=yes
 op1=Climb-out
-retex1s=wall
+retex1s=new_wall
 retex1d=elfwood
 recol2s=6342
 recol2d=23020
@@ -244,8 +244,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -255,8 +255,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -322,8 +322,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -345,8 +345,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 category=door_open_and_close
@@ -365,7 +365,7 @@ param=next_loc_stage,loc_1348
 name=Bookcase
 desc=Lots of books.
 model=model_loc_155
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -375,7 +375,7 @@ name=Wall
 desc=This wall looks odd...
 model=model_loc_155
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5316
@@ -385,7 +385,7 @@ name=Wall
 desc=This wall looks odd...
 model=model_loc_155
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5316
@@ -8707,7 +8707,7 @@ desc=There is something strange about this wall...
 model=model_loc_3
 active=yes
 op1=Push
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1587]
@@ -8716,14 +8716,14 @@ desc=There is something strange about this wall...
 model=model_loc_3
 active=yes
 op1=Push
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1588]
 model=model_loc_3
 active=yes
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1589]
@@ -8751,8 +8751,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -8764,7 +8764,7 @@ width=2
 length=2
 op1=Push
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -8776,7 +8776,7 @@ model=model_loc_1593
 active=no
 width=2
 length=2
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -8789,8 +8789,8 @@ desc=An entranceway into the dungeon.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -8799,8 +8799,8 @@ name=Door
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -8936,7 +8936,7 @@ model=model_loc_1512
 wallwidth=32
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -8946,7 +8946,7 @@ model=model_loc_1621
 sharelight=yes
 wallwidth=32
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -8954,14 +8954,14 @@ recol2d=5248
 [loc_1622]
 model=model_loc_1622
 sharelight=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1623]
 model=model_loc_1623
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9012,7 +9012,7 @@ model=model_loc_3
 sharelight=yes
 occlude=yes
 hillskew=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9026,7 +9026,7 @@ model=model_loc_1632
 sharelight=yes
 retex1s=roof
 retex1d=roof2
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1634]
@@ -9034,7 +9034,7 @@ model=model_loc_1632
 sharelight=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1635]
@@ -9042,7 +9042,7 @@ model=model_loc_1635
 sharelight=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1636]
@@ -9051,7 +9051,7 @@ sharelight=yes
 mirror=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1637]
@@ -9059,7 +9059,7 @@ model=model_loc_1637
 sharelight=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1638]
@@ -9067,14 +9067,14 @@ model=model_loc_1638
 sharelight=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1639]
 model=model_loc_1638
 sharelight=yes
 mirror=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 retex2s=roof
 retex2d=thatched
@@ -9084,7 +9084,7 @@ model=model_loc_1640
 sharelight=yes
 retex1s=roof
 retex1d=wood2
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1641]
@@ -9092,13 +9092,13 @@ model=model_loc_1640
 sharelight=yes
 retex1s=roof
 retex1d=thatched
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1642]
 model=model_loc_1640
 sharelight=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1643]
@@ -9106,13 +9106,13 @@ model=model_loc_1640
 sharelight=yes
 retex1s=roof
 retex1d=roof2
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1644]
 model=model_loc_1644
 sharelight=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [oldcastlewallbattlementroof]
@@ -9143,7 +9143,7 @@ sharelight=yes
 active=no
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1650]
@@ -9153,7 +9153,7 @@ mirror=yes
 active=no
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [loc_1651]
@@ -9167,7 +9167,7 @@ blockwalk=no
 sharelight=yes
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [oldstone_arched_doortop_b_l]
@@ -9177,7 +9177,7 @@ blockwalk=no
 sharelight=yes
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [oldstone_arched_doortop_b_r]
@@ -9188,7 +9188,7 @@ sharelight=yes
 mirror=yes
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [oldstone_arched_doorbase_r]
@@ -9196,7 +9196,7 @@ model=model_loc_1580
 sharelight=yes
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [oldstone_arched_doorbase_l]
@@ -9205,7 +9205,7 @@ mirror=yes
 sharelight=yes
 recol1s=15855
 recol1d=7329
-retex2s=wall
+retex2s=new_wall
 retex2d=mossybricks
 
 [crumblywall_with_roof_diag]
@@ -9221,7 +9221,7 @@ model=model_loc_1658
 sharelight=yes
 occlude=yes
 hillskew=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9231,7 +9231,7 @@ model=model_loc_1659
 sharelight=yes
 occlude=yes
 hillskew=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9244,7 +9244,7 @@ active=no
 name=Bricks
 desc=A pile of bricks.
 model=model_loc_1661
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9253,7 +9253,7 @@ recol2d=5248
 name=Bricks
 desc=A pile of bricks.
 model=model_loc_1662
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9263,7 +9263,7 @@ name=Bricks
 desc=A pile of bricks.
 model=model_loc_1661
 mirror=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -9272,7 +9272,7 @@ recol2d=5248
 model=model_loc_3
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=elfwall
 recol2s=6342
 recol2d=12650
@@ -9378,7 +9378,7 @@ model=model_loc_3
 sharelight=yes
 occlude=yes
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=glyphs
 
 [loc_1688]
@@ -9386,7 +9386,7 @@ model=model_loc_3
 sharelight=yes
 occlude=yes
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=mossy
 
 [loc_1689]
@@ -9552,19 +9552,19 @@ active=no
 model=model_loc_1714
 width=2
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1719]
 model=model_loc_1716
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1720]
 model=model_loc_1717
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1721]
@@ -9881,7 +9881,7 @@ op1=Climb-up
 model=model_loc_3
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=elfwood
 recol2s=6342
 recol2d=23020
@@ -9890,8 +9890,8 @@ recol2d=23020
 model=model_loc_3
 sharelight=yes
 occlude=yes
-retex1s=wall
-retex1d=planks
+retex1s=new_wall
+retex1d=new_planks
 recol2s=6342
 recol2d=16743
 
@@ -10093,7 +10093,7 @@ desc=This door requires a key.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -10105,7 +10105,7 @@ desc=The door to the champion's guild.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -10125,7 +10125,7 @@ occlude=yes
 model=model_loc_3
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=rockwall
 recol2s=6342
 recol2d=5316
@@ -10134,7 +10134,7 @@ recol2d=5316
 model=model_loc_3
 sharelight=yes
 occlude=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossy
 
 [loc_1810]
@@ -10796,7 +10796,7 @@ active=no
 sharelight=yes
 occlude=yes
 mapscene=21
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1935]
@@ -10805,7 +10805,7 @@ active=no
 sharelight=yes
 occlude=yes
 mapscene=21
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1936]
@@ -10814,7 +10814,7 @@ active=no
 sharelight=yes
 occlude=yes
 mapscene=21
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1937]
@@ -10832,13 +10832,13 @@ name=Tower
 model=model_loc_1937
 width=2
 length=2
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1940]
 model=model_loc_1651
 sharelight=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [woodwall+brickedge_left]
@@ -10862,14 +10862,14 @@ mirror=yes
 [loc_1945]
 model=model_loc_1943
 sharelight=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1946]
 model=model_loc_1943
 sharelight=yes
 mirror=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_1949]
@@ -10893,14 +10893,14 @@ model=model_loc_1629
 blockwalk=no
 blockrange=no
 retex1s=mossybricks
-retex1d=wall
+retex1d=new_wall
 
 [loc_1953]
 model=model_loc_1630
 blockwalk=no
 blockrange=no
 retex1s=mossybricks
-retex1d=wall
+retex1d=new_wall
 
 [loc_1954]
 model=model_loc_1659
@@ -11232,7 +11232,7 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -11294,8 +11294,8 @@ desc=It's closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 param=next_loc_stage,loc_2033
@@ -11305,8 +11305,8 @@ name=Door
 desc=It's open.
 model=model_loc_3
 active=yes
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -11316,14 +11316,14 @@ desc=Used for climbing.
 model=model_loc_2065
 op1=Investigate
 mapscene=21
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_2066]
 name=Wall
 model=model_loc_1934
 mapscene=21
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 
 [loc_2067]
@@ -11335,7 +11335,7 @@ op1=Investigate
 [loc_2070]
 model=model_loc_3
 active=no
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -11351,8 +11351,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 param=next_loc_stage,loc_1532
@@ -11374,7 +11374,7 @@ occlude=yes
 hillskew=yes
 op1=Search
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -11552,8 +11552,8 @@ active=yes
 op1=Open
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -11564,8 +11564,8 @@ model=model_loc_3
 active=yes
 op1=Open
 active=yes
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -11788,7 +11788,7 @@ desc=This door is very sturdy looking.
 model=model_loc_1512
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -11801,8 +11801,8 @@ desc=This door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 category=door_open_and_close
@@ -11814,7 +11814,7 @@ desc=This door is very sturdy looking.
 model=model_loc_1512
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -11827,7 +11827,7 @@ desc=This door is very sturdy looking.
 model=model_loc_1512
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -11838,7 +11838,7 @@ desc=There is something strange about this wall...
 model=model_loc_3
 active=yes
 op1=Push
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 category=door_open_and_close
 param=next_loc_stage,loc_1588
@@ -12241,8 +12241,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -12252,7 +12252,7 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -12288,7 +12288,7 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -12439,7 +12439,7 @@ model=model_loc_3
 sharelight=yes
 occlude=yes
 op1=Kick
-retex1s=wall
+retex1s=new_wall
 retex1d=elfwood
 recol2s=6342
 recol2d=23020
@@ -12471,8 +12471,8 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -12482,8 +12482,8 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -12510,8 +12510,8 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -12521,7 +12521,7 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
+retex1s=new_wall
 retex1d=elfdoor
 recol2s=6342
 recol2d=11458
@@ -12532,7 +12532,7 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
+retex1s=new_wall
 retex1d=elfdoor
 recol2s=6342
 recol2d=11458
@@ -12543,7 +12543,7 @@ model=model_loc_37
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -12554,8 +12554,8 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -12565,7 +12565,7 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Pick Lock
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -12701,7 +12701,7 @@ desc=It's closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13053,7 +13053,7 @@ name=Door
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13064,7 +13064,7 @@ desc=A nicely fitted door.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13404,7 +13404,7 @@ name=Door
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13414,7 +13414,7 @@ name=Door
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13425,8 +13425,8 @@ desc=The door is closed.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
-retex1d=door
+retex1s=new_wall
+retex1d=new_door
 recol2s=6342
 recol2d=11458
 
@@ -13444,7 +13444,7 @@ name=Gate
 model=model_loc_52
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13457,7 +13457,7 @@ model=model_loc_52
 active=yes
 op1=Open
 mirror=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -13738,7 +13738,7 @@ desc=A closed door.
 model=model_loc_3
 active=yes
 op1=Open
-retex1s=wall
+retex1s=new_wall
 retex1d=door2
 recol2s=6342
 recol2d=11458
@@ -14972,7 +14972,7 @@ desc=A strange crack cuts into the wall.
 model=model_loc_3209
 active=yes
 op1=push
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -14986,7 +14986,7 @@ name=Odd looking wall
 desc=A strange crack cuts into the wall.
 model=model_loc_3210
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -14999,7 +14999,7 @@ desc=A strange crack cuts into the wall.
 model=model_loc_3211
 active=yes
 op1=push
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
@@ -15013,7 +15013,7 @@ name=Odd looking wall
 desc=A strange crack cuts into the wall.
 model=model_loc_3212
 active=yes
-retex1s=wall
+retex1s=new_wall
 retex1d=mossybricks
 recol2s=6342
 recol2d=5248
