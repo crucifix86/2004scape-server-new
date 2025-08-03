@@ -1,7 +1,7 @@
-0=door
-1=water
-2=wall
-3=planks
+0=new_door
+1=new_water
+2=new_wall
+3=new_planks
 4=elfdoor
 5=darkwood
 6=roof
