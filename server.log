@@ -1,0 +1,14 @@
+
+> 2004scape@1.0.0 quickstart
+> tsx src/app.ts
+
+8/2/2025 5:54:37 PM	 DEBUG	 Checking for compiler update
+8/2/2025 5:54:38 PM	 DEBUG	 Compiler is up to date
+8/2/2025 5:54:38 PM	 INFO	 Starting world
+8/2/2025 5:54:38 PM	 DEBUG	 Loading game map
+8/2/2025 5:54:39 PM	 INFO	 World ready: Visit http://localhost:8888/rs2.cgi
+Packing server cache (1/2)
+Compiling server scripts
+Packed server cache (1/2)
+Packing client cache (2/2)
+Packed client cache (2/2)

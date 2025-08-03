@@ -24,7 +24,6 @@
     "login": "tsx src/login.ts",
     "maintenance": "tsx src/appMaintenance.ts",
     "precommit": "prettier . --write && eslint src --fix",
-    "prepare": "husky",
     "quickstart": "tsx src/app.ts",
     "setup": "tsx tools/server/setup.ts",
     "sqlite:migrate": "prisma migrate deploy --schema prisma/singleworld/schema.prisma",
