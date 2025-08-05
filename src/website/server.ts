@@ -1604,6 +1604,11 @@ export function createWebsiteServer() {
             return res.status(403).json({ error: 'Insufficient permissions' });
         }
         
+        const { exec, spawn } = require('child_process');
+        const util = require('util');
+        const execPromise = util.promisify(exec);
+        const https = require('https');
+        
         try {
             const { version } = req.body;
             
@@ -1613,10 +1618,6 @@ export function createWebsiteServer() {
             if (autoBackup) {
                 const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
                 const backupName = `pre-update-backup-${timestamp}.tar.gz`;
-                
-                const { exec } = require('child_process');
-                const util = require('util');
-                const execPromise = util.promisify(exec);
                 
                 await execPromise(`cd /home/crucifix && tar --exclude='node_modules' --exclude='.git' --exclude='*.log' --exclude='*.pid' -czf ${backupName} 2004scape-server`);
             }
@@ -1643,13 +1644,124 @@ export function createWebsiteServer() {
                 // Continue even if logging fails
             }
             
-            // In a real implementation, this would:
-            // 1. Download the update from GitHub
-            // 2. Extract it to a temporary directory
-            // 3. Apply the update while respecting exclusions
-            // 4. Restart the server
+            // Download the update from GitHub
+            const downloadUrl = `https://api.github.com/repos/crucifix86/2004scape-server-new/zipball/v${version}`;
+            const tempDir = `/tmp/2004scape-update-${Date.now()}`;
+            const zipPath = `${tempDir}.zip`;
             
-            res.json({ success: true, message: 'Update started' });
+            // Create temp directory
+            await execPromise(`mkdir -p ${tempDir}`);
+            
+            // Download the release
+            const file = fs.createWriteStream(zipPath);
+            await new Promise((resolve, reject) => {
+                https.get(downloadUrl, {
+                    headers: {
+                        'User-Agent': '2004scape-server',
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }, (response) => {
+                    if (response.statusCode === 302 || response.statusCode === 301) {
+                        // Follow redirect
+                        https.get(response.headers.location, (redirectResponse) => {
+                            redirectResponse.pipe(file);
+                            file.on('finish', () => {
+                                file.close();
+                                resolve();
+                            });
+                        }).on('error', reject);
+                    } else {
+                        response.pipe(file);
+                        file.on('finish', () => {
+                            file.close();
+                            resolve();
+                        });
+                    }
+                }).on('error', reject);
+            });
+            
+            // Extract the downloaded file
+            await execPromise(`unzip -q ${zipPath} -d ${tempDir}`);
+            
+            // Find the extracted directory (GitHub creates a directory with the repo name and commit hash)
+            const extractedDirs = fs.readdirSync(tempDir);
+            if (extractedDirs.length === 0) {
+                throw new Error('No files extracted from update package');
+            }
+            const extractedDir = path.join(tempDir, extractedDirs[0]);
+            
+            // Build rsync exclude parameters
+            let excludeParams = ['--exclude=node_modules', '--exclude=.git', '--exclude=*.log', '--exclude=*.pid', '--exclude=db.sqlite', '--exclude=website/uploads'];
+            if (excludeCss) {
+                excludeParams.push('--exclude=website/css');
+            }
+            if (excludeIndex) {
+                excludeParams.push('--exclude=website/index.php');
+            }
+            if (excludeViews) {
+                excludeParams.push('--exclude=website/views');
+            }
+            
+            // Apply the update using rsync with limited output
+            const rsyncCommand = `rsync -a --delete ${excludeParams.join(' ')} ${extractedDir}/ /home/crucifix/2004scape-server/`;
+            
+            // Use spawn instead of exec to handle large outputs
+            const rsyncProcess = spawn('rsync', [
+                '-a',
+                '--delete',
+                ...excludeParams,
+                `${extractedDir}/`,
+                '/home/crucifix/2004scape-server/'
+            ]);
+            
+            let rsyncOutput = '';
+            let rsyncError = '';
+            
+            rsyncProcess.stdout.on('data', (data) => {
+                rsyncOutput += data.toString();
+                // Limit output size
+                if (rsyncOutput.length > 10000) {
+                    rsyncOutput = rsyncOutput.slice(-5000) + '... (truncated)';
+                }
+            });
+            
+            rsyncProcess.stderr.on('data', (data) => {
+                rsyncError += data.toString();
+            });
+            
+            await new Promise((resolve, reject) => {
+                rsyncProcess.on('close', (code) => {
+                    if (code !== 0) {
+                        reject(new Error(`rsync failed with code ${code}: ${rsyncError}`));
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+            
+            // Clean up temporary files
+            await execPromise(`rm -rf ${tempDir} ${zipPath}`);
+            
+            // Update version file
+            fs.writeFileSync(path.join(process.cwd(), 'version.txt'), version);
+            
+            // Log successful update
+            try {
+                db.prepare(`
+                    INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'))
+                `).run(
+                    req.session.user.id,
+                    req.session.user.username,
+                    'SYSTEM_UPDATE',
+                    'System',
+                    `Successfully updated to version ${version}`
+                );
+            } catch (logErr) {
+                console.error('Failed to log update success:', logErr);
+            }
+            
+            res.json({ success: true, message: 'Update applied successfully. Please restart the server manually.' });
         } catch (err) {
             console.error('Update failed:', err);
             res.status(500).json({ error: 'Update failed: ' + err.message });
