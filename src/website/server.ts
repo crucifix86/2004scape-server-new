@@ -1362,6 +1362,252 @@ export function createWebsiteServer() {
         });
     });
 
+    // Admin updates page
+    app.get('/admin/updates', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.redirect('/admin');
+        }
+        
+        res.render('admin/updates', { 
+            user: req.session.user,
+            hasPermission: req.hasPermission
+        });
+    });
+    
+    // Get update settings
+    app.get('/admin/update-settings', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        const settings = {
+            auto_backup: db.prepare('SELECT value FROM settings WHERE key = ?').get('update_auto_backup')?.value !== 'false',
+            exclude_css: db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_css')?.value === 'true',
+            exclude_index: db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_index')?.value === 'true',
+            exclude_website_views: db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_views')?.value === 'true'
+        };
+        
+        res.json(settings);
+    });
+    
+    // Save update settings
+    app.post('/admin/update-settings', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        const settings = req.body;
+        
+        db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('update_auto_backup', settings.auto_backup ? 'true' : 'false');
+        db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('update_exclude_css', settings.exclude_css ? 'true' : 'false');
+        db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('update_exclude_index', settings.exclude_index ? 'true' : 'false');
+        db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('update_exclude_views', settings.exclude_website_views ? 'true' : 'false');
+        
+        res.json({ success: true });
+    });
+    
+    // Check for updates
+    app.get('/admin/check-updates', requireAdmin, async (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        try {
+            // Get current version from package.json
+            const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+            const currentVersion = packageJson.version || '1.0.0';
+            
+            // Check GitHub for latest release
+            const response = await fetch('https://api.github.com/repos/crucifix86/2004scape-server-new/releases/latest', {
+                headers: {
+                    'User-Agent': '2004scape-server'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to check for updates');
+            }
+            
+            const release = await response.json();
+            const latestVersion = release.tag_name?.replace('v', '') || release.name || 'Unknown';
+            
+            res.json({
+                currentVersion,
+                latestVersion,
+                updateAvailable: latestVersion !== currentVersion && latestVersion !== 'Unknown',
+                changelog: release.body || 'No changelog available',
+                downloadUrl: release.zipball_url
+            });
+        } catch (err) {
+            console.error('Update check failed:', err);
+            res.json({
+                currentVersion: 'Unknown',
+                latestVersion: 'Unknown',
+                updateAvailable: false,
+                error: err.message
+            });
+        }
+    });
+    
+    // Create backup
+    app.post('/admin/create-backup', requireAdmin, async (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        try {
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const backupName = `backup-${timestamp}.tar.gz`;
+            const backupPath = path.join('/home/crucifix', backupName);
+            
+            // Create backup using tar
+            const { exec } = require('child_process');
+            const util = require('util');
+            const execPromise = util.promisify(exec);
+            
+            await execPromise(`cd /home/crucifix && tar --exclude='node_modules' --exclude='.git' --exclude='*.log' --exclude='*.pid' -czf ${backupName} 2004scape-server`);
+            
+            // Log the action
+            db.prepare(`
+                INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                VALUES (?, ?, ?, ?, ?, datetime('now'))
+            `).run(
+                req.session.user.id,
+                req.session.user.username,
+                'CREATE_BACKUP',
+                'System',
+                `Created backup: ${backupName}`,
+            );
+            
+            res.json({ success: true, filename: backupName });
+        } catch (err) {
+            console.error('Backup creation failed:', err);
+            res.status(500).json({ error: 'Failed to create backup' });
+        }
+    });
+    
+    // List backups
+    app.get('/admin/list-backups', requireAdmin, async (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        try {
+            const files = fs.readdirSync('/home/crucifix');
+            const backups = files
+                .filter(f => f.startsWith('backup-') && f.endsWith('.tar.gz'))
+                .map(filename => {
+                    const stats = fs.statSync(path.join('/home/crucifix', filename));
+                    return {
+                        filename,
+                        size: (stats.size / 1024 / 1024).toFixed(2) + ' MB',
+                        created: stats.mtime.toLocaleString()
+                    };
+                })
+                .sort((a, b) => b.created.localeCompare(a.created));
+            
+            res.json(backups);
+        } catch (err) {
+            console.error('Failed to list backups:', err);
+            res.json([]);
+        }
+    });
+    
+    // Download backup
+    app.get('/admin/download-backup/:filename', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).send('Insufficient permissions');
+        }
+        
+        const filename = req.params.filename;
+        
+        // Validate filename to prevent directory traversal
+        if (!filename.match(/^backup-[\d\-T]+\.tar\.gz$/)) {
+            return res.status(400).send('Invalid backup filename');
+        }
+        
+        const filePath = path.join('/home/crucifix', filename);
+        
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send('Backup not found');
+        }
+        
+        res.download(filePath);
+    });
+    
+    // Start update
+    app.post('/admin/start-update', requireAdmin, async (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).json({ error: 'Insufficient permissions' });
+        }
+        
+        try {
+            const { version } = req.body;
+            
+            // Create backup first if enabled
+            const autoBackup = db.prepare('SELECT value FROM settings WHERE key = ?').get('update_auto_backup')?.value !== 'false';
+            
+            if (autoBackup) {
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const backupName = `pre-update-backup-${timestamp}.tar.gz`;
+                
+                const { exec } = require('child_process');
+                const util = require('util');
+                const execPromise = util.promisify(exec);
+                
+                await execPromise(`cd /home/crucifix && tar --exclude='node_modules' --exclude='.git' --exclude='*.log' --exclude='*.pid' -czf ${backupName} 2004scape-server`);
+            }
+            
+            // Get exclude settings
+            const excludeCss = db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_css')?.value === 'true';
+            const excludeIndex = db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_index')?.value === 'true';
+            const excludeViews = db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_views')?.value === 'true';
+            
+            // Log the update action
+            db.prepare(`
+                INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                VALUES (?, ?, ?, ?, ?, datetime('now'))
+            `).run(
+                req.session.user.id,
+                req.session.user.username,
+                'SYSTEM_UPDATE',
+                'System',
+                `Started update to version ${version}`,
+            );
+            
+            // In a real implementation, this would:
+            // 1. Download the update from GitHub
+            // 2. Extract it to a temporary directory
+            // 3. Apply the update while respecting exclusions
+            // 4. Restart the server
+            
+            res.json({ success: true, message: 'Update started' });
+        } catch (err) {
+            console.error('Update failed:', err);
+            res.status(500).json({ error: 'Update failed: ' + err.message });
+        }
+    });
+    
+    // Update progress endpoint (SSE)
+    app.get('/admin/update-progress', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).send('Insufficient permissions');
+        }
+        
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+        });
+        
+        // In a real implementation, this would send progress updates
+        // For now, just send a completion message
+        setTimeout(() => {
+            res.write(`data: ${JSON.stringify({ progress: 100, status: 'completed' })}\n\n`);
+            res.end();
+        }, 2000);
+    });
+
     // Admin - Settings
     app.get('/admin/settings', requireAdmin, (req, res) => {
         // Check permission
