@@ -1548,7 +1548,7 @@ export function createWebsiteServer() {
         const filename = req.params.filename;
         
         // Validate filename to prevent directory traversal
-        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-T]+\.tar\.gz$/)) {
+        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-TZ]+\.tar\.gz$/)) {
             return res.status(400).send('Invalid backup filename');
         }
         
@@ -1570,7 +1570,7 @@ export function createWebsiteServer() {
         const filename = req.params.filename;
         
         // Validate filename to prevent directory traversal
-        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-T]+\.tar\.gz$/)) {
+        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-TZ]+\.tar\.gz$/)) {
             return res.status(400).send('Invalid backup filename');
         }
         
