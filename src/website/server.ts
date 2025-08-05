@@ -1690,8 +1690,22 @@ export function createWebsiteServer() {
             }
             const extractedDir = path.join(tempDir, extractedDirs[0]);
             
-            // Build rsync exclude parameters
-            let excludeParams = ['--exclude=node_modules', '--exclude=.git', '--exclude=*.log', '--exclude=*.pid', '--exclude=db.sqlite', '--exclude=website/uploads'];
+            // Build rsync exclude parameters - CRITICAL: Protect user data!
+            let excludeParams = [
+                '--exclude=node_modules',
+                '--exclude=.git',
+                '--exclude=*.log',
+                '--exclude=*.pid',
+                '--exclude=db.sqlite',
+                '--exclude=*.sqlite',
+                '--exclude=*.db',
+                '--exclude=website/uploads',
+                '--exclude=data/players',
+                '--exclude=.env',
+                '--exclude=server',
+                '--exclude=cookies.txt',
+                '--exclude=*.backup'
+            ];
             if (excludeCss) {
                 excludeParams.push('--exclude=website/css');
             }
@@ -1702,13 +1716,13 @@ export function createWebsiteServer() {
                 excludeParams.push('--exclude=website/views');
             }
             
-            // Apply the update using rsync with limited output
-            const rsyncCommand = `rsync -a --delete ${excludeParams.join(' ')} ${extractedDir}/ /home/crucifix/2004scape-server/`;
+            // Apply the update using rsync WITHOUT --delete to prevent data loss
+            const rsyncCommand = `rsync -a ${excludeParams.join(' ')} ${extractedDir}/ /home/crucifix/2004scape-server/`;
             
             // Use spawn instead of exec to handle large outputs
             const rsyncProcess = spawn('rsync', [
                 '-a',
-                '--delete',
+                // '--delete' REMOVED to prevent accidental data deletion
                 ...excludeParams,
                 `${extractedDir}/`,
                 '/home/crucifix/2004scape-server/'
@@ -1741,6 +1755,19 @@ export function createWebsiteServer() {
             
             // Clean up temporary files
             await execPromise(`rm -rf ${tempDir} ${zipPath}`);
+            
+            // Verify critical files still exist
+            const criticalFiles = ['db.sqlite', '.env', 'server'];
+            const missingFiles = [];
+            for (const file of criticalFiles) {
+                if (!fs.existsSync(path.join(process.cwd(), file))) {
+                    missingFiles.push(file);
+                }
+            }
+            
+            if (missingFiles.length > 0) {
+                throw new Error(`Critical files missing after update: ${missingFiles.join(', ')}. Please restore from backup!`);
+            }
             
             // Update version file
             fs.writeFileSync(path.join(process.cwd(), 'version.txt'), version);
