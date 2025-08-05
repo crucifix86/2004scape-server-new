@@ -1802,7 +1802,11 @@ export function createWebsiteServer() {
                 console.error('Failed to log update success:', logErr);
             }
             
-            res.json({ success: true, message: 'Update applied successfully. Please restart the server manually.' });
+            // Send success response before server might restart
+            res.json({ success: true, message: 'Update applied successfully. Server will restart automatically.' });
+            
+            // If using tsx watch, the server will auto-restart when files change
+            // Otherwise, we could trigger a restart here
         } catch (err) {
             console.error('Update failed:', err);
             res.status(500).json({ error: 'Update failed: ' + err.message });

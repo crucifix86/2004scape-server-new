@@ -457,13 +457,58 @@
                 
                 eventSource.onerror = () => {
                     eventSource.close();
-                    alert('Connection lost during update');
-                    progressBar.style.display = 'none';
+                    // Don't show error - connection loss is expected during server restart
+                    progressFill.style.width = '100%';
+                    progressFill.textContent = 'Update applied - Restarting server...';
+                    
+                    // Wait a bit then try to reconnect
+                    setTimeout(() => {
+                        checkServerStatus();
+                    }, 5000);
                 };
             } catch (err) {
                 alert('Failed to start update: ' + err.message);
                 progressBar.style.display = 'none';
             }
+        }
+        
+        // Check if server is back online after restart
+        async function checkServerStatus() {
+            const progressFill = document.getElementById('progressFill');
+            let attempts = 0;
+            const maxAttempts = 12; // Try for 60 seconds
+            
+            const checkInterval = setInterval(async () => {
+                attempts++;
+                try {
+                    // Use a manual timeout for better compatibility
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+                    
+                    const response = await fetch('/admin/check-updates', {
+                        method: 'GET',
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        clearInterval(checkInterval);
+                        progressFill.textContent = 'Update completed successfully!';
+                        alert('Update completed! The page will now reload.');
+                        window.location.reload();
+                    }
+                } catch (err) {
+                    // Still waiting for server to come back
+                    progressFill.textContent = `Waiting for server to restart... (${60 - attempts * 5}s)`;
+                }
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkInterval);
+                    progressFill.textContent = 'Update may require manual restart';
+                    alert('Server is taking longer than expected to restart. Please check the server manually.');
+                }
+            }, 5000); // Check every 5 seconds
         }
         
         // View changelog
