@@ -295,6 +295,19 @@ db.exec(`
     )
 `);
 
+db.exec(`
+    CREATE TABLE IF NOT EXISTS moderator_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        moderator_id INTEGER NOT NULL,
+        moderator_name TEXT NOT NULL,
+        action TEXT NOT NULL,
+        target_name TEXT,
+        details TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (moderator_id) REFERENCES account(id)
+    )
+`);
+
 // Insert default moderator permissions
 const defaultPermissions = [
     { key: 'view_players', name: 'View Players', description: 'Can view player list and details' },
@@ -1467,17 +1480,22 @@ export function createWebsiteServer() {
             
             await execPromise(`cd /home/crucifix && tar --exclude='node_modules' --exclude='.git' --exclude='*.log' --exclude='*.pid' -czf ${backupName} 2004scape-server`);
             
-            // Log the action
-            db.prepare(`
-                INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
-                VALUES (?, ?, ?, ?, ?, datetime('now'))
-            `).run(
-                req.session.user.id,
-                req.session.user.username,
-                'CREATE_BACKUP',
-                'System',
-                `Created backup: ${backupName}`,
-            );
+            // Log the action (check if table exists first)
+            try {
+                db.prepare(`
+                    INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'))
+                `).run(
+                    req.session.user.id,
+                    req.session.user.username,
+                    'CREATE_BACKUP',
+                    'System',
+                    `Created backup: ${backupName}`
+                );
+            } catch (logErr) {
+                console.error('Failed to log backup action:', logErr);
+                // Continue even if logging fails
+            }
             
             res.json({ success: true, filename: backupName });
         } catch (err) {
@@ -1495,7 +1513,7 @@ export function createWebsiteServer() {
         try {
             const files = fs.readdirSync('/home/crucifix');
             const backups = files
-                .filter(f => f.startsWith('backup-') && f.endsWith('.tar.gz'))
+                .filter(f => (f.startsWith('backup-') || f.startsWith('pre-update-backup-') || f.startsWith('2004scape-backup-')) && f.endsWith('.tar.gz'))
                 .map(filename => {
                     const stats = fs.statSync(path.join('/home/crucifix', filename));
                     return {
@@ -1522,7 +1540,7 @@ export function createWebsiteServer() {
         const filename = req.params.filename;
         
         // Validate filename to prevent directory traversal
-        if (!filename.match(/^backup-[\d\-T]+\.tar\.gz$/)) {
+        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-T]+\.tar\.gz$/)) {
             return res.status(400).send('Invalid backup filename');
         }
         
@@ -1533,6 +1551,51 @@ export function createWebsiteServer() {
         }
         
         res.download(filePath);
+    });
+    
+    // Delete backup
+    app.delete('/admin/delete-backup/:filename', requireAdmin, (req, res) => {
+        if (req.session.user.staffmodlevel < 4) {
+            return res.status(403).send('Insufficient permissions');
+        }
+        
+        const filename = req.params.filename;
+        
+        // Validate filename to prevent directory traversal
+        if (!filename.match(/^(backup-|pre-update-backup-|2004scape-backup-)[\d\-T]+\.tar\.gz$/)) {
+            return res.status(400).send('Invalid backup filename');
+        }
+        
+        const filePath = path.join('/home/crucifix', filename);
+        
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send('Backup not found');
+        }
+        
+        try {
+            fs.unlinkSync(filePath);
+            
+            // Log the action
+            try {
+                db.prepare(`
+                    INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'))
+                `).run(
+                    req.session.user.id,
+                    req.session.user.username,
+                    'DELETE_BACKUP',
+                    'System',
+                    `Deleted backup: ${filename}`
+                );
+            } catch (logErr) {
+                console.error('Failed to log delete action:', logErr);
+            }
+            
+            res.json({ success: true });
+        } catch (err) {
+            console.error('Failed to delete backup:', err);
+            res.status(500).send('Failed to delete backup');
+        }
     });
     
     // Start update
@@ -1564,16 +1627,21 @@ export function createWebsiteServer() {
             const excludeViews = db.prepare('SELECT value FROM settings WHERE key = ?').get('update_exclude_views')?.value === 'true';
             
             // Log the update action
-            db.prepare(`
-                INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
-                VALUES (?, ?, ?, ?, ?, datetime('now'))
-            `).run(
-                req.session.user.id,
-                req.session.user.username,
-                'SYSTEM_UPDATE',
-                'System',
-                `Started update to version ${version}`,
-            );
+            try {
+                db.prepare(`
+                    INSERT INTO moderator_logs (moderator_id, moderator_name, action, target_name, details, timestamp)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'))
+                `).run(
+                    req.session.user.id,
+                    req.session.user.username,
+                    'SYSTEM_UPDATE',
+                    'System',
+                    `Started update to version ${version}`
+                );
+            } catch (logErr) {
+                console.error('Failed to log update action:', logErr);
+                // Continue even if logging fails
+            }
             
             // In a real implementation, this would:
             // 1. Download the update from GitHub
