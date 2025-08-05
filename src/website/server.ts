@@ -1426,9 +1426,17 @@ export function createWebsiteServer() {
         }
         
         try {
-            // Get current version from package.json
-            const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-            const currentVersion = packageJson.version || '1.0.0';
+            // Get current version from package.json (fallback to version.txt)
+            let currentVersion = '1.0.0';
+            try {
+                const packageJson = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+                currentVersion = packageJson.version || '1.0.0';
+            } catch (e) {
+                // Fallback to version.txt if package.json fails
+                if (fs.existsSync(path.join(process.cwd(), 'version.txt'))) {
+                    currentVersion = fs.readFileSync(path.join(process.cwd(), 'version.txt'), 'utf8').trim();
+                }
+            }
             
             // Check GitHub for latest release
             const response = await fetch('https://api.github.com/repos/crucifix86/2004scape-server-new/releases/latest', {
@@ -1771,6 +1779,12 @@ export function createWebsiteServer() {
             
             // Update version file
             fs.writeFileSync(path.join(process.cwd(), 'version.txt'), version);
+            
+            // Update package.json version
+            const packageJsonPath = path.join(process.cwd(), 'package.json');
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+            packageJson.version = version;
+            fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
             
             // Log successful update
             try {
