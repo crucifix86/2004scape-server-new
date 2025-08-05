@@ -1,0 +1,42 @@
+[devshop]
+// Developer-only shop with free items
+scope=shared
+size=30
+restock=yes
+stackall=yes
+allstock=no
+// Food (all free - 0gp)
+stock1=shark,100,0
+stock2=lobster,100,0
+stock3=swordfish,100,0
+stock4=cake,100,0
+// Rune armor (all free - 0gp)
+stock5=rune_full_helm,10,0
+stock6=rune_platebody,10,0
+stock7=rune_platelegs,10,0
+stock8=rune_kiteshield,10,0
+stock9=rune_scimitar,10,0
+// Dragon items (all free - 0gp)
+stock10=dragon_med_helm,5,0
+stock11=dragon_sq_shield,5,0
+stock12=dragon_longsword,5,0
+stock13=dragon_dagger,5,0
+stock14=dragon_battleaxe,5,0
+// Runes (all free - 0gp)
+stock15=deathrune,1000,0
+stock16=naturerune,1000,0
+stock17=lawrune,1000,0
+stock18=chaosrune,1000,0
+stock19=firerune,1000,0
+stock20=waterrune,1000,0
+stock21=airrune,1000,0
+stock22=earthrune,1000,0
+// Useful items (all free - 0gp)
+stock23=coins,1000000,0
+stock24=rope,100,0
+stock25=spade,100,0
+stock26=tinderbox,100,0
+stock27=rune_arrow,1000,0
+stock28=adamant_arrow,1000,0
+stock29=mithril_arrow,1000,0
+stock30=iron_arrow,1000,0

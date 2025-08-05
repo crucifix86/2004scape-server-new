@@ -23,7 +23,7 @@
         body {
             margin: 0px 0px;
             overflow: auto;
-            background-color: black;
+            background: #1a1a1a url('/img/bg2.jpg') repeat;
         }
 
         #game {
@@ -35,8 +35,8 @@
         }
 
         canvas {
-            width: 789px;
-            height: 532px;
+            width: 1183px;
+            height: 798px;
             display: block;
             /* touch-action: none; */
             -webkit-touch-callout: none;
@@ -218,10 +218,16 @@
             switch (size) {
                 default:
                 case '1':
+                    canvas.style.width = '1183px';
+                    canvas.style.height = '798px';
+                    break;
+                case '1.5':
+                    canvas.style.width = '1774px';
+                    canvas.style.height = '1197px';
+                    break;
                 case '2':
-                case '3':
-                    canvas.style.width = (789 * parseInt(size)) + 'px';
-                    canvas.style.height = (532 * parseInt(size)) + 'px';
+                    canvas.style.width = '2366px';
+                    canvas.style.height = '1596px';
                     canvas.style.maxWidth = 'none';
                     break;
                 case 'auto':
@@ -264,11 +270,12 @@
         </div>
 
         <div class="centered" id="controls">
-            <select id="size" name="size" onchange="setSize();">
+            <a class="green" href="/" style="margin-right: 10px;">🏠 Home</a> |
+            <select id="size" name="size" onchange="setSize();" style="margin-left: 10px;">
                 <optgroup>
-                <option value="1" id="1">1x Size</option>
-                <option value="2" id="2">2x Size</option>
-                <option value="3" id="3">3x Size</option>
+                <option value="1" id="1">Default (1.5x)</option>
+                <option value="1.5" id="1.5">Large (2.25x)</option>
+                <option value="2" id="2">Extra Large (3x)</option>
                 <option value="auto" id="auto">Auto Sizing</option>
                 </optgroup>
             </select> |
@@ -318,6 +325,11 @@
 
         <% if (per_deployment_token) { %>
             document.cookie = 'per_deployment_token="<%= per_deployment_token %>"; Domain=' + window.location.hostname;
+        <% } %>
+
+        <% if (username) { %>
+            // Store username for potential auto-login
+            localStorage.setItem('savedUsername', '<%= username %>');
         <% } %>
 
         (() => {

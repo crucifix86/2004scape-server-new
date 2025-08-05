@@ -1,0 +1,17 @@
+[opnpc1,dev_merchant]
+// Talk to dev merchant
+mes("Dev Merchant: Greetings, developer!");
+mes("Dev Merchant: I have special items just for you.");
+mes("Dev Merchant: Everything in my shop is free!");
+mes("Dev Merchant: Right-click and select 'Trade' to browse.");
+
+[opnpc3,dev_merchant]
+// Trade with dev merchant
+~openshop(devshop, 0, 0, 0, "Developer's Secret Shop");
+
+// Simple spawn command
+[debugproc,spawndevmerchant]
+mes("Spawning Dev Merchant...");
+npc_add(coord, dev_merchant, 500);
+mes("Dev Merchant spawned at your location!");
+mes("Right-click and select 'Trade' for free items.");

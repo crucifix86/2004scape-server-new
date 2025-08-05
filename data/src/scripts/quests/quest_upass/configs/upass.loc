@@ -535,8 +535,8 @@ model=model_loc_3
 active=yes
 op1=Open
 op2=Knock
-retex1s=new_wall
-retex1d=new_door
+retex1s=wall
+retex1d=door
 recol2s=6342
 recol2d=11458
 
@@ -546,8 +546,8 @@ desc=The door is open.
 model=model_loc_3
 active=yes
 op1=Close
-retex1s=new_wall
-retex1d=new_door
+retex1s=wall
+retex1d=door
 recol2s=6342
 recol2d=11458
 

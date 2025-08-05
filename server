@@ -1,0 +1,115 @@
+#!/bin/bash
+
+# 2004scape Server Management Script
+# Usage: ./server [start|stop|restart|status]
+
+case "$1" in
+    start)
+        echo "Starting 2004scape servers..."
+        
+        # Kill any existing processes first
+        echo "Stopping any existing servers..."
+        pkill -f "tsx.*src/app.ts" 2>/dev/null
+        pkill -f "tsx.*src/login.ts" 2>/dev/null
+        sleep 2
+        
+        # Start the game server in the background
+        echo "Starting game server on port 8888..."
+        npm run dev > server_fresh.log 2>&1 &
+        GAME_PID=$!
+        echo "Game server started with PID: $GAME_PID"
+        
+        # Wait a moment for the game server to initialize
+        sleep 3
+        
+        # Start the login server with a different management port to avoid conflicts
+        echo "Starting login server on port 43500 (management port 8899)..."
+        WEB_MANAGEMENT_PORT=8899 npx tsx src/login.ts > login.log 2>&1 &
+        LOGIN_PID=$!
+        echo "Login server started with PID: $LOGIN_PID"
+        
+        # Create PID files
+        echo "$GAME_PID" > game_server.pid
+        echo "$LOGIN_PID" > login_server.pid
+        
+        echo ""
+        echo "Servers started successfully!"
+        echo "Game server: http://localhost:8888"
+        echo "Login server: Port 43500"
+        echo ""
+        echo "Logs:"
+        echo "  Game server: tail -f server_fresh.log"
+        echo "  Login server: tail -f login.log"
+        ;;
+        
+    stop)
+        echo "Stopping 2004scape servers..."
+        
+        # Stop using PID files if they exist
+        if [ -f game_server.pid ]; then
+            GAME_PID=$(cat game_server.pid)
+            if kill -0 $GAME_PID 2>/dev/null; then
+                echo "Stopping game server (PID: $GAME_PID)..."
+                kill $GAME_PID
+            fi
+            rm game_server.pid
+        fi
+        
+        if [ -f login_server.pid ]; then
+            LOGIN_PID=$(cat login_server.pid)
+            if kill -0 $LOGIN_PID 2>/dev/null; then
+                echo "Stopping login server (PID: $LOGIN_PID)..."
+                kill $LOGIN_PID
+            fi
+            rm login_server.pid
+        fi
+        
+        # Also kill by process name as backup
+        pkill -f "tsx.*src/app.ts" 2>/dev/null
+        pkill -f "tsx.*src/login.ts" 2>/dev/null
+        
+        echo "Servers stopped."
+        ;;
+        
+    restart)
+        echo "Restarting 2004scape servers..."
+        echo ""
+        $0 stop
+        sleep 2
+        $0 start
+        ;;
+        
+    status)
+        echo "2004scape Server Status:"
+        echo ""
+        
+        # Check game server
+        if [ -f game_server.pid ]; then
+            GAME_PID=$(cat game_server.pid)
+            if kill -0 $GAME_PID 2>/dev/null; then
+                echo "✓ Game server is running (PID: $GAME_PID)"
+            else
+                echo "✗ Game server is not running (stale PID file)"
+            fi
+        else
+            echo "✗ Game server is not running"
+        fi
+        
+        # Check login server
+        if [ -f login_server.pid ]; then
+            LOGIN_PID=$(cat login_server.pid)
+            if kill -0 $LOGIN_PID 2>/dev/null; then
+                echo "✓ Login server is running (PID: $LOGIN_PID)"
+            else
+                echo "✗ Login server is not running (stale PID file)"
+            fi
+        else
+            echo "✗ Login server is not running"
+        fi
+        ;;
+        
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac

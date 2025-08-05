@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - <%= serverName %></title>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 180px;
+            background: #1a1a1a url('/img/bg2.jpg') repeat;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.9);
+            min-height: calc(100vh - 180px);
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .profile-header {
+            background: rgba(42, 24, 16, 0.8);
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .profile-header h1 {
+            color: #ffd700;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        
+        .profile-header p {
+            color: #d4af37;
+            margin: 0;
+        }
+        
+        .profile-section {
+            background: rgba(42, 24, 16, 0.8);
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-section h2 {
+            color: #ffd700;
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            border-bottom: 1px solid #8b4513;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #8b4513;
+            color: #fff;
+            border-radius: 3px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        
+        .form-help {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #ff4757);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ff4757, #ff6b7a);
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .alert-error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .pin-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .pin-enabled {
+            background: rgba(0, 255, 0, 0.2);
+            color: #4CAF50;
+        }
+        
+        .pin-disabled {
+            background: rgba(255, 0, 0, 0.2);
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header', { user: user, content: content }) %>
+    
+    <div class="main-container">
+        <div class="content">
+            <div class="profile-header">
+                <h1>My Profile</h1>
+                <p>Welcome, <%= user.username %>!</p>
+            </div>
+            
+            <% if (success) { %>
+                <div class="alert alert-success"><%= success %></div>
+            <% } %>
+            
+            <% if (error) { %>
+                <div class="alert alert-error"><%= error %></div>
+            <% } %>
+            
+            <!-- Account Information -->
+            <div class="profile-section">
+                <h2>Account Information</h2>
+                <form method="POST" action="/profile/email">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" value="<%= user.username %>" disabled style="background: rgba(0,0,0,0.3); cursor: not-allowed;">
+                        <div class="form-help">Your username cannot be changed</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" value="<%= user.email || '' %>" required>
+                        <div class="form-help">Used for account recovery</div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Update Email</button>
+                </form>
+            </div>
+            
+            <!-- PIN Security -->
+            <div class="profile-section">
+                <h2>PIN Security</h2>
+                <p style="margin-bottom: 15px;">
+                    PIN Status: 
+                    <span class="pin-status <%= user.pin_enabled ? 'pin-enabled' : 'pin-disabled' %>">
+                        <%= user.pin_enabled ? 'ENABLED' : 'DISABLED' %>
+                    </span>
+                </p>
+                
+                <% if (!user.pin_enabled) { %>
+                    <!-- Enable PIN -->
+                    <form method="POST" action="/profile/pin/enable" onsubmit="return validatePinEnable()">
+                        <p style="color: #888; margin-bottom: 15px;">
+                            Adding a PIN provides extra security. You'll need to enter it along with your password when logging in.
+                        </p>
+                        
+                        <div class="form-group">
+                            <label for="new_pin">Create 4-Digit PIN</label>
+                            <input type="password" id="new_pin" name="new_pin" maxlength="4" pattern="[0-9]{4}" required>
+                            <div class="form-help">Must be exactly 4 digits</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm_pin">Confirm PIN</label>
+                            <input type="password" id="confirm_pin" name="confirm_pin" maxlength="4" pattern="[0-9]{4}" required>
+                        </div>
+                        
+                        <button type="submit" class="btn">Enable PIN</button>
+                    </form>
+                <% } else { %>
+                    <!-- Change/Disable PIN -->
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <h3 style="color: #ffd700; margin-bottom: 10px;">Change PIN</h3>
+                            <form method="POST" action="/profile/pin/change" onsubmit="return validatePinChange()">
+                                <div class="form-group">
+                                    <label for="current_pin">Current PIN</label>
+                                    <input type="password" id="current_pin" name="current_pin" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="new_pin_change">New PIN</label>
+                                    <input type="password" id="new_pin_change" name="new_pin" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confirm_pin_change">Confirm New PIN</label>
+                                    <input type="password" id="confirm_pin_change" name="confirm_pin" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                                
+                                <button type="submit" class="btn">Change PIN</button>
+                            </form>
+                        </div>
+                        
+                        <div style="flex: 1;">
+                            <h3 style="color: #ffd700; margin-bottom: 10px;">Disable PIN</h3>
+                            <form method="POST" action="/profile/pin/disable" onsubmit="return confirmDisablePin()">
+                                <p style="color: #888; margin-bottom: 15px;">
+                                    Disabling PIN will remove this extra security layer from your account.
+                                </p>
+                                
+                                <div class="form-group">
+                                    <label for="current_pin_disable">Enter Current PIN</label>
+                                    <input type="password" id="current_pin_disable" name="current_pin" maxlength="4" pattern="[0-9]{4}" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-danger">Disable PIN</button>
+                            </form>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            
+            <!-- Change Password -->
+            <div class="profile-section">
+                <h2>Change Password</h2>
+                <form method="POST" action="/profile/password" onsubmit="return validatePasswordChange()">
+                    <div class="form-group">
+                        <label for="current_password">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new_password">New Password</label>
+                        <input type="password" id="new_password" name="new_password" minlength="5" maxlength="20" required>
+                        <div class="form-help">5-20 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function validatePinEnable() {
+            const pin = document.getElementById('new_pin').value;
+            const confirm = document.getElementById('confirm_pin').value;
+            
+            if (!/^\d{4}$/.test(pin)) {
+                alert('PIN must be exactly 4 digits');
+                return false;
+            }
+            
+            if (pin !== confirm) {
+                alert('PINs do not match');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function validatePinChange() {
+            const pin = document.getElementById('new_pin_change').value;
+            const confirm = document.getElementById('confirm_pin_change').value;
+            
+            if (!/^\d{4}$/.test(pin)) {
+                alert('PIN must be exactly 4 digits');
+                return false;
+            }
+            
+            if (pin !== confirm) {
+                alert('PINs do not match');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function confirmDisablePin() {
+            return confirm('Are you sure you want to disable PIN security? This will make your account less secure.');
+        }
+        
+        function validatePasswordChange() {
+            const newPass = document.getElementById('new_password').value;
+            const confirm = document.getElementById('confirm_password').value;
+            
+            if (newPass !== confirm) {
+                alert('Passwords do not match');
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
+</body>
+</html>

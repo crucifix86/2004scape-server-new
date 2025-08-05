@@ -6,6 +6,7 @@ import Packet from '#/io/Packet.js';
 import MessageHandler from '#/network/game/client/handler/MessageHandler.js';
 import MessagePublic from '#/network/game/client/model/MessagePublic.js';
 import WordPack from '#/wordenc/WordPack.js';
+import { logChat } from '#/shared/db.js';
 
 
 export default class MessagePublicHandler extends MessageHandler<MessagePublic> {
@@ -39,6 +40,9 @@ export default class MessagePublicHandler extends MessageHandler<MessagePublic> 
         out.gdata(player.message, 0, player.message.length);
         out.release();
         player.masks |= PlayerInfoProt.CHAT;
+
+        // Log the chat message
+        logChat(player.account_id, player.username, unpack, 'public');
 
         player.socialProtect = true;
         return true;

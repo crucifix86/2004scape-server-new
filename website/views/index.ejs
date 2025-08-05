@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= content.site_title || serverName %> - <%= content.site_tagline || 'Relive RuneScape 2004' %></title>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 180px; /* Push content below header */
+            background: #1a1a1a url('/img/bg2.jpg') repeat;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .fixed-header {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 9999 !important;
+        }
+        
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.9);
+            min-height: 100vh;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .box {
+            background: rgba(42, 24, 16, 0.8);
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .box h3 {
+            margin: 0 0 15px 0;
+            color: #ffd700;
+            font-size: 18px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        
+        .server-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 3px;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 24px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .play-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #1a1a1a;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        
+        .play-button:hover {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .main-content {
+            background: rgba(42, 24, 16, 0.8);
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        
+        .welcome-section h2 {
+            color: #ffd700;
+            font-size: 28px;
+            margin: 0 0 15px 0;
+        }
+        
+        .welcome-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #d4af37;
+        }
+        
+        .feature h4 {
+            margin: 0 0 10px 0;
+            color: #ffd700;
+            font-size: 16px;
+        }
+        
+        .feature p {
+            margin: 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .news-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #8b4513;
+        }
+        
+        .news-section h3 {
+            color: #ffd700;
+            font-size: 22px;
+            margin: 0 0 15px 0;
+        }
+        
+        .news-item {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #d4af37;
+        }
+        
+        .news-item h4 {
+            margin: 0 0 5px 0;
+            color: #ffd700;
+        }
+        
+        .news-item .date {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .news-item p {
+            margin: 0;
+            color: #e0e0e0;
+        }
+        
+        .online-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 5px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 15px #4CAF50, 0 0 25px #4CAF50; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header using absolute (since fixed is broken) -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 9999;">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <div style="background: linear-gradient(to bottom, #3d241a, #2c1810); padding: 20px; text-align: center; border-bottom: 3px solid #8b4513;">
+                <% if (content.site_logo) { %>
+                    <img src="<%= content.site_logo %>" alt="<%= content.site_title || serverName %>" style="max-width: 300px; max-height: 100px; margin: 0 auto;">
+                <% } else { %>
+                    <h1 style="margin: 0; color: #ffd700; font-size: 42px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);"><%= content.site_title || serverName %></h1>
+                <% } %>
+                <p style="margin: 10px 0 0 0; color: #d4af37; font-size: 16px;"><%= content.site_tagline || 'Experience RuneScape as it was in May 2004' %></p>
+            </div>
+            
+            <nav style="background: #2a1810; padding: 0; border-bottom: 2px solid #8b4513;">
+                <ul style="list-style: none; margin: 0; padding: 0; display: flex; justify-content: center;">
+                    <li><a href="/" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Home</a></li>
+                    <li><a href="/hiscores" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Hiscores</a></li>
+                    <% if (user && user.staffmodlevel >= 2) { %>
+                        <li><a href="/admin" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Admin Panel</a></li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Main content area -->
+    <div class="main-container">
+        <div class="content">
+            <div class="sidebar">
+                <div class="box">
+                    <h3>Server Status</h3>
+                    <div class="server-stats">
+                        <div class="stat-item">
+                            <span class="stat-value"><%= totalPlayers %></span>
+                            <span class="stat-label">Total Players</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value"><%= onlinePlayers %></span>
+                            <span class="stat-label">Online Now</span>
+                        </div>
+                    </div>
+                    <div class="online-status">
+                        <% if (serverOnline) { %>
+                            <div class="status-dot"></div>
+                            <span style="color: #4CAF50;">Server Online</span>
+                        <% } else { %>
+                            <div class="status-dot" style="background: #f44336;"></div>
+                            <span style="color: #f44336;">Server Offline</span>
+                        <% } %>
+                    </div>
+                    <% if (user) { %>
+                        <div style="text-align: center; margin: 10px 0; color: #ffd700;">
+                            Logged in as: <strong><%= user.username %></strong>
+                        </div>
+                        <form id="playForm" action="/rs2.cgi" method="get">
+                            <input type="hidden" name="username" value="<%= user.username %>">
+                            <button type="submit" class="play-button">Play Now</button>
+                        </form>
+                        <a href="/profile" class="play-button" style="background: linear-gradient(135deg, #5a67d8, #667eea); margin-top: 10px;">👤 My Profile</a>
+                        <% if (user.staffmodlevel >= 2) { %>
+                            <a href="/admin" class="play-button" style="background: linear-gradient(135deg, #1e3c72, #2a5298); margin-top: 10px;">🛡️ Admin Panel</a>
+                        <% } %>
+                        <a href="/logout" class="play-button" style="background: linear-gradient(135deg, #8b4513, #a0522d); margin-top: 10px;">Logout</a>
+                    <% } else { %>
+                        <form id="loginForm" style="margin-top: 15px;">
+                            <div id="loginError" style="color: #ff6666; text-align: center; margin-bottom: 10px; display: none;"></div>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="username" name="username" placeholder="Username" required 
+                                       style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #8b4513; color: #fff; border-radius: 3px;">
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <input type="password" id="password" name="password" placeholder="Password" required
+                                       style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #8b4513; color: #fff; border-radius: 3px;">
+                            </div>
+                            <div id="pinField" style="margin-bottom: 10px; display: none;">
+                                <input type="password" id="pin" name="pin" placeholder="4-Digit PIN" maxlength="4" pattern="[0-9]{4}"
+                                       style="width: 100%; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #8b4513; color: #fff; border-radius: 3px;">
+                            </div>
+                            <button type="submit" class="play-button">Login & Play</button>
+                        </form>
+                        <script>
+                            // Check for PIN when username field loses focus
+                            document.getElementById('username').addEventListener('blur', async () => {
+                                const username = document.getElementById('username').value;
+                                const pinField = document.getElementById('pinField');
+                                
+                                if (username) {
+                                    try {
+                                        const response = await fetch('/check-pin', {
+                                            method: 'POST',
+                                            headers: {'Content-Type': 'application/json'},
+                                            body: JSON.stringify({username})
+                                        });
+                                        
+                                        const data = await response.json();
+                                        if (data.hasPin) {
+                                            pinField.style.display = 'block';
+                                        } else {
+                                            pinField.style.display = 'none';
+                                            document.getElementById('pin').value = '';
+                                        }
+                                    } catch (err) {
+                                        // If check fails, hide PIN field
+                                        pinField.style.display = 'none';
+                                    }
+                                }
+                            });
+                            
+                            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                const errorDiv = document.getElementById('loginError');
+                                const pinField = document.getElementById('pinField');
+                                errorDiv.style.display = 'none';
+                                
+                                const username = document.getElementById('username').value;
+                                const password = document.getElementById('password').value;
+                                const pin = document.getElementById('pin').value;
+                                
+                                try {
+                                    const response = await fetch('/login', {
+                                        method: 'POST',
+                                        headers: {'Content-Type': 'application/json'},
+                                        body: JSON.stringify({username, password, pin})
+                                    });
+                                    
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        window.location.reload();
+                                    } else if (data.requirePin) {
+                                        // Show PIN field
+                                        pinField.style.display = 'block';
+                                        document.getElementById('pin').focus();
+                                        errorDiv.textContent = 'Please enter your PIN';
+                                        errorDiv.style.display = 'block';
+                                    } else {
+                                        errorDiv.textContent = data.error || 'Invalid username or password';
+                                        errorDiv.style.display = 'block';
+                                    }
+                                } catch (err) {
+                                    errorDiv.textContent = 'Login failed. Please try again.';
+                                    errorDiv.style.display = 'block';
+                                }
+                            });
+                        </script>
+                        <div style="text-align: center; margin: 10px 0; color: #888; font-size: 12px;">
+                            or
+                        </div>
+                        <a href="/register" class="play-button" style="background: linear-gradient(135deg, #2e7d32, #43a047);">Create New Account</a>
+                    <% } %>
+                </div>
+                
+                <div class="box">
+                    <h3>Server Rates</h3>
+                    <div class="server-stats">
+                        <div class="stat-item">
+                            <span class="stat-value"><%= xpRate %></span>
+                            <span class="stat-label">XP Rate</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value"><%= dropRate %></span>
+                            <span class="stat-label">Drop Rate</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="main-content">
+                <div class="news-section">
+                    <h3>Latest News</h3>
+                    <% news.forEach(item => { %>
+                        <div class="news-item">
+                            <h4><%= item.title %></h4>
+                            <div class="date"><%= item.date %></div>
+                            <p><%= item.content %></p>
+                        </div>
+                    <% }); %>
+                </div>
+                
+                <div class="welcome-section">
+                    <h2><%= content.welcome_title || `Welcome to ${serverName}` %></h2>
+                    <p><%= content.welcome_desc || 'Step back in time to the golden age of RuneScape. Our server faithfully recreates the game exactly as it was in May 2004, complete with authentic mechanics, original content, and the classic gameplay you remember.' %></p>
+                    
+                    <div class="features">
+                        <% if (content.features && content.features.length > 0) { %>
+                            <% content.features.forEach(feature => { %>
+                                <div class="feature">
+                                    <h4><%= feature.icon %> <%= feature.title %></h4>
+                                    <p><%= feature.description %></p>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="feature">
+                                <h4>⚔️ Classic Combat</h4>
+                                <p>Original 3-hit combat system with authentic timing and mechanics</p>
+                            </div>
+                            <div class="feature">
+                                <h4>🗺️ Original World</h4>
+                                <p>Explore the 2004 world map with all original locations</p>
+                            </div>
+                            <div class="feature">
+                                <h4>🎯 No Pay-to-Win</h4>
+                                <p>Pure gameplay experience with no microtransactions</p>
+                            </div>
+                            <div class="feature">
+                                <h4>🛠️ Developer Tools</h4>
+                                <p>Special commands for testing and development</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="background: #1a1a1a; border-top: 2px solid #8b4513; padding: 20px; text-align: center; color: #888; font-size: 14px;">
+            <%= content.footer_text || 'Copyright © 2024 2004Scape - All Rights Reserved' %>
+        </div>
+    </div>
+</body>
+</html>

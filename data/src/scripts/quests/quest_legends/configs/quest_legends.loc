@@ -607,7 +607,7 @@ model=model_loc_443
 width=2
 length=2
 op1=Look
-retex1s=new_water
+retex1s=water
 retex1d=bark
 
 [legends_tall_reeds]

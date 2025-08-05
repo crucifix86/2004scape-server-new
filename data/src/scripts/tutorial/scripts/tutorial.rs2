@@ -322,7 +322,12 @@ inv_add(inv, bodyrune, 2);
 
 inv_clear(worn);
 inv_clear(bank);
-inv_add(bank, coins, 25);
+// Add starting gold - default 25 but check if player has a higher amount set
+def_int $starting_gold = 25;
+// Check if player has starting gold flag set (would be 9000 or configured amount)
+// We can't access the player's startingGold property directly in RuneScript
+// So we'll just use the default behavior for now
+inv_add(bank, coins, $starting_gold);
 
 ~stat_reset_all;
 

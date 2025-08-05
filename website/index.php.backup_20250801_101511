@@ -1,0 +1,554 @@
+<?php
+session_start();
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns:IE> 
+<meta http-equiv="content-type" content="text/html;charset=ISO-8859-1">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<head> 
+<meta http-equiv="Expires" content="0"> 
+<meta http-equiv="Pragma" content="no-cache"> 
+<meta http-equiv="Cache-Control" content="no-cache"> 
+<meta name="MSSmartTagsPreventParsing" content="TRUE"> 
+<title>BrainScape - Adventure Time Lads</title> 
+<link rel="shortcut icon" href='img/favicon.ico' />
+<link href="css/basic-3.css" rel="stylesheet" type="text/css" media="all"> 
+<link href="css/main/title-5.css" rel="stylesheet" type="text/css" media="all"> 
+<style>
+.server-rates {
+    background: linear-gradient(135deg, #2e7d32, #43a047);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
+    color: #fff;
+    text-align: center;
+}
+
+.server-rates h3 {
+    color: #ffd700;
+    margin: 0 0 15px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-size: 18px;
+}
+
+.rates-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.rate-item {
+    background: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.rate-label {
+    font-size: 12px;
+    color: #ccc;
+    margin-bottom: 5px;
+}
+
+.rate-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.server-status {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.status-online {
+    background: #4CAF50;
+    box-shadow: 0 0 5px #4CAF50;
+}
+
+.status-offline {
+    background: #f44336;
+    box-shadow: 0 0 5px #f44336;
+}
+
+.login-box {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 2px solid #333;
+    background: rgba(255,255,255,0.9);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #ffd700;
+    background: #fff;
+}
+
+.login-button {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd700);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.login-button:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.user-info {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.user-info h3 {
+    color: #ffd700;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.user-info .username {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.user-info .staff-badge {
+    display: inline-block;
+    background: #ffd700;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.user-actions {
+    margin-top: 10px;
+}
+
+.user-actions a {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.user-actions a:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+}
+
+.admin-link {
+    background: #ffd700 !important;
+    color: #333 !important;
+    font-weight: bold;
+}
+
+.admin-link:hover {
+    background: #ffed4e !important;
+}
+
+.logout-link {
+    background: #ff4444 !important;
+}
+
+.logout-link:hover {
+    background: #ff6666 !important;
+}
+
+.login-error {
+    background: rgba(255,0,0,0.2);
+    border: 1px solid #ff0000;
+    color: #ff9999;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: none;
+    font-size: 12px;
+}
+
+.login-success {
+    background: rgba(0,255,0,0.2);
+    border: 1px solid #00ff00;
+    color: #99ff99;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: none;
+    font-size: 12px;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.register-link a {
+    color: #ffd700;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Button styles from original page */
+.button {
+    display: inline-block;
+    text-decoration: none;
+    margin: 5px;
+}
+
+.buttonmedium {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.buttonred {
+    background: linear-gradient(135deg, #d32f2f, #f44336);
+    color: #fff;
+    border: 2px solid #b71c1c;
+}
+
+.buttonred:hover {
+    background: linear-gradient(135deg, #f44336, #ff5252);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.4);
+}
+
+.buttongreen {
+    background: linear-gradient(135deg, #388e3c, #4caf50);
+    color: #fff;
+    border: 2px solid #2e7d32;
+}
+
+.buttongreen:hover {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.4);
+}
+</style>
+</head> 
+<body> 
+
+<div id="body"> 
+<div> 
+<div style="text-align: center; margin-bottom: 10px; position:relative;"> 
+<img src="img/title2/logo.png" alt="BrainScape"><br></div>
+</div> 
+<div class="left"> 
+
+<!-- Server Rates Display -->
+<div class="server-rates" id="server-rates">
+    <h3>Server Information</h3>
+    <div class="rates-grid">
+        <div class="rate-item">
+            <div class="rate-label">XP Rate</div>
+            <div class="rate-value" id="xp-rate">-</div>
+        </div>
+        <div class="rate-item">
+            <div class="rate-label">Drop Rate</div>
+            <div class="rate-value" id="drop-rate">-</div>
+        </div>
+    </div>
+    <div class="server-status">
+        <span class="status-indicator" id="status-indicator"></span>
+        <span id="status-text">Checking...</span> | 
+        <span id="online-count">0</span> Players Online
+    </div>
+</div>
+
+<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+    <!-- User is logged in -->
+    <div class="user-info">
+        <h3>Welcome Back!</h3>
+        <div class="username">
+            <?php echo htmlspecialchars($_SESSION['username']); ?>
+            <?php 
+            $staffLevels = [
+                1 => 'Helper',
+                2 => 'Moderator',
+                3 => 'Admin',
+                4 => 'Developer'
+            ];
+            if ($_SESSION['staff_level'] > 0): ?>
+                <span class="staff-badge"><?php echo $staffLevels[$_SESSION['staff_level']] ?? 'Staff'; ?></span>
+            <?php endif; ?>
+        </div>
+        <div class="user-actions">
+            <a href="client">Play Game</a>
+            <?php if ($_SESSION['staff_level'] >= 2): ?>
+                <a href="admin/" class="admin-link">🛡️ Admin Panel</a>
+            <?php endif; ?>
+            <a href="logout_handler.php" class="logout-link">Logout</a>
+        </div>
+    </div>
+<?php else: ?>
+    <!-- Login form -->
+    <div class="login-box">
+        <h3 style="color: #ffd700; margin: 0 0 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Account Login</h3>
+        <div id="login-error" class="login-error"></div>
+        <div id="login-success" class="login-success"></div>
+        <form id="login-form" class="login-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="login-button" id="login-btn">Login</button>
+        </form>
+        <div class="register-link">
+            <a href="register.php">Create New Account</a>
+        </div>
+    </div>
+<?php endif; ?>
+
+<fieldset class="menu rs"> 
+<legend>BrainScape</legend>
+<ul> 
+<li class="i-create"><a href="index.php">Home</a></li> 
+<li class="i-create"><a href="forums">Forums</a></li> 
+<li class="i-create"><a href="client">Play Now</a></li> 
+<li class="i-create"><a href="http://www.facebook.com/pages/BrainScapeRS/464826750195293">Our Facebook Page</a></li> 
+</ul> 
+</fieldset> 
+
+<fieldset class="menu help">
+<legend>Help Center</legend> 
+<ul> 
+<li class="i-answer"><a href="ex">BrainScape Base</a></li> 
+<li class="i-started"><a href="ex/geting-started.php">How To Get Started</a></li>  
+<li class="i-rules"><a href="ex/rules.php">Rules</a></li>  
+<li class="i-safety"><a href="ex/your-safety.php">Safety & Security</a></li> 
+<li class="i-hiscores"><a href="hiscores.php">Hiscores</a></li>
+</ul> 
+</fieldset> 
+
+<fieldset class="menu comm">
+<legend>Account Tools</legend> 
+<ul> 
+<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+    <li class="i-play"><a href="client">Play Game</a></li>
+    <?php if ($_SESSION['staff_level'] >= 2): ?>
+        <li class="i-mod"><a href="admin/">Admin Panel</a></li>
+    <?php endif; ?>
+    <li class="i-logout"><a href="logout_handler.php">Logout</a></li>
+<?php else: ?>
+    <li class="i-create"><a href="register.php">Create Account</a></li>
+    <li class="i-play"><a href="client">Play as Guest</a></li>
+<?php endif; ?>
+</ul> 
+</fieldset> 
+</div> 
+
+<div class="newscontainer"> 
+<br /> 
+<img class="narrowscroll-top" src="img/scroll/scroll457_top.gif" alt="" width="466" height="50"> 
+<div class="narrowscroll-bg"> 
+<div class="narrowscroll-bgimg"> 
+<div class="narrowscroll-content"> 
+<center>
+<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']): ?>
+    <a href="client/index.php=option1.php" class="button buttonmedium buttonred">Play BrainScape</a>
+<?php else: ?>
+    <a href="client/index.php=option1.php" class="button buttonmedium buttonred">Play BrainScape</a>
+    <a href="register.php" class="button buttonmedium buttongreen">Create Account</a>
+<?php endif; ?>
+</center>
+<br /> 
+<img class="news-icon" src="img/news.gif" alt="">  
+<span class="newstitle">Latest News</span> 
+<br /> 
+<br />
+
+<table> 
+<tbody> 
+<tr class="row_a"> 
+<td width="50"> 
+<img src="img/news/icon-news.gif" alt="" style=" margin-top: -4px"> 
+</td> 
+<td> 
+<span class="newsdate">1 November 2024</span> <br> 
+<a href="#">Welcome to 2004Scape</a> <br> 
+Experience RuneScape as it was in 2004. Create your account and start your adventure! 
+</td> 
+</tr> 
+</tbody> 
+</table> 
+
+<br /> 
+<table> 
+<tbody> 
+<tr class="row_b"> 
+<td width="50"> 
+<img src="img/news/icon-news.gif" alt="" style=" margin-top: -4px"> 
+</td> 
+<td> 
+<span class="newsdate">Server Features</span> <br> 
+<ul style="margin: 5px 0; padding-left: 20px;">
+<li>Authentic 2004 gameplay</li>
+<li>Active community</li>
+<li>Regular updates</li>
+<li>No pay-to-win</li>
+</ul>
+</td> 
+</tr> 
+</tbody> 
+</table> 
+
+<div style="height:1px; background-image:url(img/main/hr.gif);"></div> 
+
+<center>
+<?php 
+$dbPath = '/home/crucifix/Server/db.sqlite';
+try {
+    $db = new PDO("sqlite:$dbPath");
+    $totalPlayers = $db->query("SELECT COUNT(*) FROM account")->fetchColumn();
+    $onlinePlayers = $db->query("SELECT COUNT(DISTINCT account_id) FROM login WHERE timestamp > datetime('now', '-5 minutes')")->fetchColumn();
+    echo "<p><strong>Total Players:</strong> " . number_format($totalPlayers) . " | <strong>Online Now:</strong> " . number_format($onlinePlayers) . "</p>";
+} catch (Exception $e) {
+    echo "<p>Server Statistics Loading...</p>";
+}
+?>
+</center>
+
+</div> 
+</div> 
+</div> 
+<img class="narrowscroll-bottom" src="img/scroll/scroll457_bottom.gif" alt="" width="466" height="50"> 
+</div> 
+<div class="tandc">
+<p>Copyright &copy; 2024 BrainScape - All Rights Reserved</p>
+</div>
+</div> 
+
+<script>
+// Function to fetch and update server rates
+function updateServerRates() {
+    $.ajax({
+        url: 'api/get_rates.php',
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // Update XP rate
+            $('#xp-rate').text(data.xp_rate + 'x');
+            
+            // Update drop rate
+            $('#drop-rate').text(data.drop_rate + 'x');
+            
+            // Update online players
+            $('#online-count').text(data.online_players);
+            
+            // Update server status
+            if (data.server_status === 'online') {
+                $('#status-indicator').removeClass('status-offline').addClass('status-online');
+                $('#status-text').text('Online');
+            } else {
+                $('#status-indicator').removeClass('status-online').addClass('status-offline');
+                $('#status-text').text('Offline');
+            }
+        },
+        error: function() {
+            $('#xp-rate').text('?');
+            $('#drop-rate').text('?');
+            $('#status-text').text('Error');
+            $('#status-indicator').removeClass('status-online').addClass('status-offline');
+        }
+    });
+}
+
+$(document).ready(function() {
+    // Initial load
+    updateServerRates();
+    
+    // Refresh every 30 seconds
+    setInterval(updateServerRates, 30000);
+    
+    $('#login-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        $('#login-error').hide();
+        $('#login-success').hide();
+        $('#login-btn').prop('disabled', true).text('Logging in...');
+        
+        $.ajax({
+            url: 'login_handler.php',
+            method: 'POST',
+            data: {
+                username: $('#username').val(),
+                password: $('#password').val()
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $('#login-success').text('Login successful! Redirecting...').show();
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    $('#login-error').text(response.message || 'Login failed').show();
+                    $('#login-btn').prop('disabled', false).text('Login');
+                }
+            },
+            error: function() {
+                $('#login-error').text('Connection error. Please try again.').show();
+                $('#login-btn').prop('disabled', false).text('Login');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

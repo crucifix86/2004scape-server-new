@@ -54,6 +54,8 @@ export const enum ScriptOpcode {
     MAP_PLAYERCOUNT, // official, see giant dwarf cutscene
     MAP_FINDSQUARE, // official
     MOVECOORD, // official
+    SERVER_SHOPPRICE, // custom - returns shop price setting
+    SERVER_STARTINGGOLD, // custom - returns starting gold amount
     PLAYERCOUNT,
     PROJANIM_MAP,
     PROJANIM_NPC, // todo: take active_npc
@@ -502,6 +504,8 @@ export const ScriptOpcodeMap: Map<string, number> = new Map([
     ['MAP_PLAYERCOUNT', ScriptOpcode.MAP_PLAYERCOUNT],
     ['MAP_FINDSQUARE', ScriptOpcode.MAP_FINDSQUARE],
     ['MOVECOORD', ScriptOpcode.MOVECOORD],
+    ['SERVER_SHOPPRICE', ScriptOpcode.SERVER_SHOPPRICE],
+    ['SERVER_STARTINGGOLD', ScriptOpcode.SERVER_STARTINGGOLD],
     ['PLAYERCOUNT', ScriptOpcode.PLAYERCOUNT],
     ['PROJANIM_MAP', ScriptOpcode.PROJANIM_MAP],
     ['PROJANIM_NPC', ScriptOpcode.PROJANIM_NPC],

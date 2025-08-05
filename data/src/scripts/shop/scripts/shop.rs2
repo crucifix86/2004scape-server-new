@@ -194,4 +194,5 @@ if ($int4 < 0) {
     $int4 = 2000000000;
     error("Cost overflowed with base_cost=<tostring($base_cost)>, for %shopbuy=<tostring($shopbuy)> and %shophaggle=<tostring($shophaggle)>. Corrected to 2 billion.");
 }
+
 return($int4);

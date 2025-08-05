@@ -1,0 +1,20 @@
+<div class="fixed-header-content" style="max-width: 900px; margin: 0 auto;">
+    <div class="header" style="background: linear-gradient(to bottom, #3d241a, #2c1810); padding: 20px; text-align: center; border-bottom: 3px solid #8b4513;">
+        <% if (typeof content !== 'undefined' && content.site_logo) { %>
+            <img src="<%= content.site_logo %>" alt="<%= (typeof content !== 'undefined' && content.site_title) ? content.site_title : '2004Scape' %>" style="max-width: 300px; max-height: 100px; margin: 0 auto;">
+        <% } else { %>
+            <h1 style="margin: 0; color: #ffd700; font-size: 42px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);"><%= (typeof content !== 'undefined' && content.site_title) ? content.site_title : (typeof serverName !== 'undefined' ? serverName : '2004Scape') %></h1>
+        <% } %>
+        <p style="margin: 10px 0 0 0; color: #d4af37; font-size: 16px;"><%= (typeof content !== 'undefined' && content.site_tagline) ? content.site_tagline : 'Experience RuneScape as it was in May 2004' %></p>
+    </div>
+    
+    <nav class="nav-bar" style="background: #2a1810; padding: 0; border-bottom: 2px solid #8b4513;">
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; justify-content: center;">
+            <li><a href="/" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Home</a></li>
+            <li><a href="/hiscores" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Hiscores</a></li>
+            <% if (user && user.staffmodlevel >= 2) { %>
+                <li><a href="/admin" style="display: block; padding: 15px 30px; color: #d4af37; text-decoration: none; text-align: center;">Admin Panel</a></li>
+            <% } %>
+        </ul>
+    </nav>
+</div>

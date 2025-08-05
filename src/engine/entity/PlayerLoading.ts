@@ -7,6 +7,7 @@ import { PlayerStat } from '#/engine/entity/PlayerStat.js';
 import World from '#/engine/World.js';
 import Packet from '#/io/Packet.js';
 import ClientSocket from '#/server/ClientSocket.js';
+import Environment from '#/util/Environment.js';
 import { fromBase37, toBase37 } from '#/util/JString.js';
 
 export class PlayerLoading {
@@ -49,6 +50,9 @@ export class PlayerLoading {
             player.stats[PlayerStat.HITPOINTS] = getExpByLevel(10);
             player.baseLevels[PlayerStat.HITPOINTS] = 10;
             player.levels[PlayerStat.HITPOINTS] = 10;
+            
+            // Starting gold is now given by talking to Bob in Lumbridge
+            
             return player;
         }
 

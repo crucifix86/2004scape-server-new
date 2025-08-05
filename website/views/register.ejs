@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - 2004Scape</title>
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a url('/img/bg2.jpg') repeat;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .register-container {
+            background: rgba(42, 24, 16, 0.95);
+            border: 3px solid #8b4513;
+            border-radius: 10px;
+            padding: 40px;
+            width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .register-header h1 {
+            color: #ffd700;
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        .register-header p {
+            color: #d4af37;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #ffd700;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #8b4513;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffd700;
+            background: rgba(0,0,0,0.7);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .form-help {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .error-message {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff4444;
+            color: #ff9999;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .success-message {
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #44ff44;
+            color: #99ff99;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .register-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .register-button:hover {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .register-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .links {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #8b4513;
+        }
+        
+        .links a {
+            color: #d4af37;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .links a:hover {
+            color: #ffd700;
+        }
+        
+        .requirements {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #8b4513;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .requirements h3 {
+            color: #ffd700;
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        
+        .requirements ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        .requirements li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join 2004Scape today!</p>
+        </div>
+        
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <% if (success) { %>
+            <div class="success-message">
+                <%= success %>
+            </div>
+        <% } %>
+        
+        <% if (typeof disabled !== 'undefined' && disabled) { %>
+            <div style="text-align: center; padding: 40px;">
+                <p style="color: #ff9999; font-size: 18px;">Registration is temporarily disabled.</p>
+                <p style="color: #888; margin-top: 20px;">Please check back later or contact an administrator.</p>
+                <a href="/" class="submit-button" style="display: inline-block; margin-top: 20px;">Return Home</a>
+            </div>
+        <% } else { %>
+        
+        <div class="requirements">
+            <h3>Account Requirements</h3>
+            <ul>
+                <li>Username: 3-12 characters (letters, numbers, underscore)</li>
+                <li>Password: 5-20 characters</li>
+                <li>Valid email address</li>
+            </ul>
+        </div>
+        
+        <form method="POST" action="/register" id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required 
+                       minlength="3" maxlength="12" 
+                       pattern="[a-zA-Z0-9_]+"
+                       title="Letters, numbers, and underscore only">
+                <div class="form-help">This will be your in-game name</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+                <div class="form-help">Used for account recovery</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required 
+                       minlength="5" maxlength="20">
+            </div>
+            
+            <div class="form-group">
+                <label for="password_confirm">Confirm Password</label>
+                <input type="password" id="password_confirm" name="password_confirm" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="captcha">
+                    Security Question: What is <span id="captcha_question"></span>?
+                    <a href="#" onclick="generateCaptcha(); document.getElementById('captcha').value=''; return false;" 
+                       style="float: right; color: #d4af37; font-size: 12px; text-decoration: none;">
+                        🔄 New Question
+                    </a>
+                </label>
+                <input type="number" id="captcha" name="captcha" required>
+                <input type="hidden" id="captcha_answer" name="captcha_answer">
+                <div class="form-help">Please solve this simple math problem</div>
+            </div>
+            
+            <button type="submit" class="register-button">Create Account</button>
+        </form>
+        
+        <div class="links">
+            <a href="/login">Already have an account?</a> • 
+            <a href="/">Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Generate math captcha
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const operations = ['+', '-', '*'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let answer;
+            switch(operation) {
+                case '+':
+                    answer = num1 + num2;
+                    break;
+                case '-':
+                    answer = num1 - num2;
+                    break;
+                case '*':
+                    answer = num1 * num2;
+                    break;
+            }
+            
+            document.getElementById('captcha_question').textContent = `${num1} ${operation} ${num2}`;
+            // Encode the answer to make it slightly harder for bots
+            document.getElementById('captcha_answer').value = btoa(answer.toString());
+        }
+        
+        // Generate captcha on page load
+        generateCaptcha();
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('password_confirm').value;
+            
+            if (password !== confirm) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+            
+            // Validate captcha
+            const captchaInput = document.getElementById('captcha').value;
+            const captchaAnswer = document.getElementById('captcha_answer').value;
+            const decodedAnswer = atob(captchaAnswer);
+            
+            if (captchaInput !== decodedAnswer) {
+                e.preventDefault();
+                alert('Incorrect answer to the security question. Please try again.');
+                generateCaptcha(); // Generate a new captcha
+                document.getElementById('captcha').value = '';
+                return false;
+            }
+        });
+    </script>
+    <% } %>
+</body>
+</html>

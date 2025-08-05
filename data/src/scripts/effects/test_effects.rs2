@@ -1,0 +1,51 @@
+[proc,test_sparkle_effect]
+// Test various visual effects at player location
+mes("Checking your equipment value...");
+
+// Check worn equipment value
+def_int $total_value = 0;
+def_int $slot = 0;
+def_obj $best_item = null;
+def_int $best_value = 0;
+
+while ($slot < inv_size(worn)) {
+    def_obj $item = inv_getobj(worn, $slot);
+    if ($item ! null) {
+        def_int $value = oc_cost($item);
+        $total_value = add($total_value, $value);
+        if ($value > $best_value) {
+            $best_value = $value;
+            $best_item = $item;
+        }
+    }
+    $slot = add($slot, 1);
+}
+
+// Create effect based on total equipment value
+def_coord $coord = coord;
+if ($total_value >= 100000) {
+    spotanim_map(teleport_casting, $coord, 0, 0);
+    mes("Your equipment blazes with power! (Value: <tostring($total_value)> gp)");
+} else if ($total_value >= 50000) {
+    spotanim_map(highlvlalchemy_casting, $coord, 0, 0);
+    mes("Your equipment shimmers! (Value: <tostring($total_value)> gp)");
+} else if ($total_value >= 10000) {
+    spotanim_map(lowlvlalchemy_casting, $coord, 0, 0);
+    mes("Your equipment glows! (Value: <tostring($total_value)> gp)");
+} else {
+    mes("Your equipment value: <tostring($total_value)> gp");
+}
+
+if ($best_item ! null) {
+    mes("Most valuable item: <oc_name($best_item)> (<tostring($best_value)> gp)");
+}
+
+[proc,create_item_sparkle](coord $coord, int $value)
+// Create sparkle based on item value
+if ($value >= 10000) {
+    spotanim_map(highlvlalchemy_casting, $coord, 0, 0);
+} else if ($value >= 1000) {
+    spotanim_map(lowlvlalchemy_casting, $coord, 0, 0);
+} else if ($value >= 100) {
+    spotanim_map(teleport_casting, $coord, 0, 0);
+}

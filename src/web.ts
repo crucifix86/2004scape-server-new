@@ -11,6 +11,7 @@ import Environment from '#/util/Environment.js';
 import { tryParseInt } from '#/util/TryParse.js';
 
 import { getPublicPerDeploymentToken } from './io/PemUtil.js';
+import { createWebsiteServer } from './website/server.js';
 
 const MIME_TYPES = new Map<string, string>();
 MIME_TYPES.set('.js', 'application/javascript');
@@ -20,16 +21,25 @@ MIME_TYPES.set('.html', 'text/html');
 MIME_TYPES.set('.wasm', 'application/wasm');
 MIME_TYPES.set('.sf2', 'application/octet-stream');
 
+// Create the website app
+const websiteApp = createWebsiteServer();
+
 // we don't need/want a full blown website or API on the game server
 export const web = http.createServer(async (req, res) => {
     try {
+        const url = new URL(req.url ?? '', `http://${req.headers.host}`);
+        
+        // Allow POST and DELETE requests for website routes
+        if ((req.method === 'POST' || req.method === 'DELETE') && (url.pathname === '/login' || url.pathname === '/register' || url.pathname === '/check-pin' || url.pathname.startsWith('/admin') || url.pathname.startsWith('/profile/'))) {
+            websiteApp(req, res);
+            return;
+        }
+        
         if (req.method !== 'GET') {
             res.writeHead(405);
             res.end();
             return;
         }
-
-        const url = new URL(req.url ?? '', `http://${req.headers.host}`);
 
         if (url.pathname.endsWith('.mid')) {
             // todo: packing process should spit out files with crc included in the name
@@ -77,14 +87,19 @@ export const web = http.createServer(async (req, res) => {
             res.setHeader('Content-Type', 'application/octet-stream');
             res.writeHead(200);
             res.end(await fsp.readFile('data/pack/client/sounds'));
-        } else if (url.pathname === '/') {
-            if (Environment.WEBSITE_REGISTRATION) {
-                res.writeHead(404);
-                res.end();
-            } else {
-                res.writeHead(302, { Location: '/rs2.cgi?lowmem=0&plugin=0' });
-                res.end();
-            }
+        } else if (url.pathname === '/' ||
+                   url.pathname === '/login' || 
+                   url.pathname === '/logout' || 
+                   url.pathname === '/register' || 
+                   url.pathname === '/hiscores' || 
+                   url.pathname === '/profile' ||
+                   url.pathname.startsWith('/profile/') ||
+                   url.pathname.startsWith('/admin') || 
+                   url.pathname.startsWith('/css/') || 
+                   url.pathname.startsWith('/img/') ||
+                   url.pathname.startsWith('/uploads/')) {
+            // Pass website requests to Express
+            websiteApp(req, res);
         } else if (url.pathname === '/rs2.cgi') {
             // embedded from website.com/client.cgi
             const plugin = tryParseInt(url.searchParams.get('plugin'), 0);
@@ -93,13 +108,16 @@ export const web = http.createServer(async (req, res) => {
             res.setHeader('Content-Type', 'text/html');
             res.writeHead(200);
 
+            const username = url.searchParams.get('username') || '';
+            
             const context = {
                 plugin,
                 nodeid: Environment.NODE_ID,
                 lowmem,
                 members: Environment.NODE_MEMBERS,
                 portoff: Environment.NODE_PORT - 43594,
-                per_deployment_token: ''
+                per_deployment_token: '',
+                username
             };
             if (Environment.WEB_SOCKET_TOKEN_PROTECTION) {
                 context.per_deployment_token = getPublicPerDeploymentToken();
@@ -124,6 +142,20 @@ export const web = http.createServer(async (req, res) => {
             };
 
             res.end(await ejs.renderFile('view/dev.ejs', context));
+        } else if (url.pathname.startsWith('/website/') && fs.existsSync('.' + url.pathname)) {
+            // Serve website static files
+            const ext = extname(url.pathname);
+            let contentType = 'text/plain';
+            if (ext === '.css') contentType = 'text/css';
+            else if (ext === '.js') contentType = 'application/javascript';
+            else if (ext === '.png') contentType = 'image/png';
+            else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+            else if (ext === '.gif') contentType = 'image/gif';
+            else if (ext === '.html') contentType = 'text/html';
+            
+            res.setHeader('Content-Type', contentType);
+            res.writeHead(200);
+            res.end(await fsp.readFile('.' + url.pathname));
         } else if (fs.existsSync('public' + url.pathname)) {
             res.setHeader('Content-Type', MIME_TYPES.get(extname(url.pathname ?? '')) ?? 'text/plain');
             res.writeHead(200);

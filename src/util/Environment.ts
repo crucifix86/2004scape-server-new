@@ -4,7 +4,7 @@ import { WalkTriggerSetting } from '#/util/WalkTriggerSetting.js';
 
 export default {
     EASY_STARTUP: tryParseBoolean(process.env.EASY_STARTUP, false),
-    WEBSITE_REGISTRATION: tryParseBoolean(process.env.WEBSITE_REGISTRATION, true),
+    WEBSITE_REGISTRATION: tryParseBoolean(process.env.WEBSITE_REGISTRATION, false),
 
     // bundler/webrtc browser mode
     STANDALONE_BUNDLE: tryParseBoolean(process.env.STANDALONE_BUNDLE, false),
@@ -34,6 +34,11 @@ export default {
     NODE_AUTO_SUBSCRIBE_MEMBERS: tryParseBoolean(process.env.NODE_AUTO_SUBSCRIBE_MEMBERS, true),
     // addxp multiplier
     NODE_XPRATE: tryParseInt(process.env.NODE_XPRATE, 1),
+    // Server settings from database
+    STARTING_GOLD: tryParseInt(process.env.STARTING_GOLD, 0),
+    SHOP_PRICES: tryParseString(process.env.SHOP_PRICES, 'normal'),
+    ALLOW_REGISTRATION: tryParseBoolean(process.env.ALLOW_REGISTRATION, true),
+    SERVER_NAME: tryParseString(process.env.SERVER_NAME, '2004Scape'),
     // production mode!
     NODE_PRODUCTION: tryParseBoolean(process.env.NODE_PRODUCTION, false),
     NODE_SUBMIT_INPUT: tryParseBoolean(process.env.NODE_SUBMIT_INPUT, false),

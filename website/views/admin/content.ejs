@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Content Management - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header .user-info {
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .nav {
+            background: #2a2a2a;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            padding: 15px;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: #3a3a3a;
+        }
+        
+        .nav a.active {
+            background: #444;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .tab-button:hover {
+            background: #555;
+        }
+        
+        .tab-button.active {
+            background: #ffd700;
+            color: #1a1a1a;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .color-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .color-input input[type="text"] {
+            flex: 1;
+        }
+        
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .feature-card input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+        }
+        
+        .feature-card textarea {
+            width: 100%;
+            padding: 8px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            color: #fff;
+            display: inline-block;
+        }
+        
+        .btn-save {
+            background: #4CAF50;
+        }
+        
+        .btn-save:hover {
+            background: #45a049;
+        }
+        
+        .btn-add {
+            background: #2196F3;
+        }
+        
+        .btn-add:hover {
+            background: #1976D2;
+        }
+        
+        .btn-remove {
+            background: #f44336;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-remove:hover {
+            background: #d32f2f;
+        }
+        
+        .logout {
+            float: right;
+            background: #ff4444;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .logout:hover {
+            background: #ff6666;
+        }
+        
+        .preview-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 2px solid #444;
+        }
+        
+        .preview-box h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            background: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>🎨 Content Management System</h1>
+        <div class="user-info">
+            Logged in as: <strong><%= user.username %></strong> 
+            (<%= user.staffmodlevel >= 4 ? 'Developer' : user.staffmodlevel >= 3 ? 'Admin' : 'Moderator' %>)
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin">📊 Dashboard</a>
+        <a href="/admin/players">👥 Players</a>
+        <a href="/admin/bans">🔨 Bans & Mutes</a>
+        <a href="/admin/reports">⚠️ Reports</a>
+        <a href="/admin/chat">💬 Chat Logs</a>
+        <a href="/admin/mod_logs">📝 Mod Logs</a>
+        <a href="/admin/settings">⚙️ Settings</a>
+        <a href="/admin/news">📰 News</a>
+        <a href="/admin/content" class="active">🎨 Content</a>
+        <a href="/">🏠 Back to Site</a>
+    </div>
+    
+    <div class="container">
+        <% if (typeof success !== 'undefined') { %>
+            <div class="success-message">✅ <%= success %></div>
+        <% } %>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('general')">📝 General Content</button>
+            <button class="tab-button" onclick="showTab('features')">⭐ Feature Cards</button>
+        </div>
+        
+        <!-- General Content Tab -->
+        <div id="general-tab" class="tab-content active">
+            <div class="panel">
+                <h2>Site Content</h2>
+                
+                <% if (user.staffmodlevel >= 4) { %>
+                    <div class="form-group">
+                        <label>Site Logo</label>
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div>
+                                <% if (content.site_logo) { %>
+                                    <img src="<%= content.site_logo %>" alt="Site Logo" style="max-width: 200px; max-height: 80px; background: #fff; padding: 10px; border-radius: 5px;">
+                                <% } else { %>
+                                    <div style="padding: 20px; background: #1a1a1a; border: 2px dashed #444; border-radius: 5px; text-align: center;">
+                                        <p style="color: #888;">No logo uploaded</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div>
+                                <input type="file" id="logo_upload" accept="image/*" style="display: none;" onchange="uploadLogo(this)">
+                                <button class="btn btn-add" onclick="document.getElementById('logo_upload').click()">📷 Upload Logo</button>
+                                <% if (content.site_logo) { %>
+                                    <button class="btn btn-remove" onclick="removeLogo()" style="margin-left: 10px;">❌ Remove Logo</button>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="description">Upload a logo image to replace the text header. Recommended size: 200x80px</div>
+                    </div>
+                <% } %>
+                
+                <div class="form-group">
+                    <label>Site Title</label>
+                    <input type="text" id="site_title" value="<%= content.site_title || '2004Scape' %>" onchange="updateContent('site_title', this.value)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Site Tagline</label>
+                    <input type="text" id="site_tagline" value="<%= content.site_tagline || 'Relive RuneScape 2004' %>" onchange="updateContent('site_tagline', this.value)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Welcome Title</label>
+                    <input type="text" id="welcome_title" value="<%= content.welcome_title || 'Welcome to 2004Scape' %>" onchange="updateContent('welcome_title', this.value)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Welcome Description</label>
+                    <textarea id="welcome_desc" onchange="updateContent('welcome_desc', this.value)"><%= content.welcome_desc || 'Step back in time to the golden age of RuneScape. Our server faithfully recreates the game exactly as it was in May 2004, complete with authentic mechanics, original content, and the classic gameplay you remember.' %></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Footer Text</label>
+                    <input type="text" id="footer_text" value="<%= content.footer_text || 'Copyright © 2024 2004Scape - All Rights Reserved' %>" onchange="updateContent('footer_text', this.value)">
+                </div>
+                
+                <button class="btn btn-save" onclick="saveGeneralContent()">💾 Save General Content</button>
+            </div>
+        </div>
+        
+        <!-- Feature Cards Tab -->
+        <div id="features-tab" class="tab-content">
+            <div class="panel">
+                <h2>Feature Cards</h2>
+                <p style="color: #888; margin-bottom: 20px;">Edit the feature cards shown on the homepage</p>
+                
+                <div id="feature-cards-container" class="feature-cards">
+                    <% 
+                    // Load features from database or use defaults
+                    let features = [];
+                    try {
+                        if (content.features) {
+                            features = JSON.parse(content.features);
+                        }
+                    } catch (e) {
+                        // Use defaults if parse fails
+                    }
+                    
+                    // If no features exist, use defaults
+                    if (features.length === 0) {
+                        features = [
+                            { icon: '⚔️', title: 'Classic Combat', description: 'Original 3-hit combat system with authentic timing and mechanics' },
+                            { icon: '🗺️', title: 'Original World', description: 'Explore the 2004 world map with all original locations' },
+                            { icon: '🎯', title: 'No Pay-to-Win', description: 'Pure gameplay experience with no microtransactions' },
+                            { icon: '🛠️', title: 'Developer Tools', description: 'Special commands for testing and development' }
+                        ];
+                    }
+                    %>
+                    
+                    <% features.forEach((feature, index) => { %>
+                        <div class="feature-card">
+                            <input type="text" placeholder="Icon (emoji)" value="<%= feature.icon %>" id="feature_icon_<%= index + 1 %>">
+                            <input type="text" placeholder="Title" value="<%= feature.title %>" id="feature_title_<%= index + 1 %>">
+                            <textarea placeholder="Description" id="feature_desc_<%= index + 1 %>"><%= feature.description %></textarea>
+                            <% if (index >= 4) { %>
+                                <button class="btn btn-remove" onclick="removeFeatureCard(this)">❌ Remove</button>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                </div>
+                
+                <button class="btn btn-add" onclick="addFeatureCard()">➕ Add Feature Card</button>
+                <button class="btn btn-save" onclick="saveFeatures()" style="margin-left: 10px;">💾 Save Features</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        function updateContent(key, value) {
+            fetch('/admin/content/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'content', key, value })
+            }).then(() => {
+                console.log('Content updated:', key);
+            });
+        }
+        
+        // Initialize feature count based on existing features
+        let featureCount = document.querySelectorAll('#feature-cards-container .feature-card').length || 4;
+        
+        function addFeatureCard() {
+            featureCount++;
+            const container = document.getElementById('feature-cards-container');
+            const card = document.createElement('div');
+            card.className = 'feature-card';
+            card.innerHTML = `
+                <input type="text" placeholder="Icon (emoji)" id="feature_icon_${featureCount}">
+                <input type="text" placeholder="Title" id="feature_title_${featureCount}">
+                <textarea placeholder="Description" id="feature_desc_${featureCount}"></textarea>
+                <button class="btn btn-remove" onclick="removeFeatureCard(this)">❌ Remove</button>
+            `;
+            container.appendChild(card);
+        }
+        
+        function removeFeatureCard(button) {
+            button.parentElement.remove();
+        }
+        
+        function saveGeneralContent() {
+            const content = {
+                site_title: document.getElementById('site_title').value,
+                site_tagline: document.getElementById('site_tagline').value,
+                welcome_title: document.getElementById('welcome_title').value,
+                welcome_desc: document.getElementById('welcome_desc').value,
+                footer_text: document.getElementById('footer_text').value
+            };
+            
+            fetch('/admin/content/general', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(content)
+            }).then(() => {
+                alert('General content saved successfully!');
+                location.reload();
+            });
+        }
+        
+        function saveFeatures() {
+            const features = [];
+            document.querySelectorAll('.feature-card').forEach((card, index) => {
+                const icon = card.querySelector('input[id^="feature_icon"]').value;
+                const title = card.querySelector('input[id^="feature_title"]').value;
+                const desc = card.querySelector('textarea').value;
+                
+                if (title) {
+                    features.push({ icon, title, description: desc });
+                }
+            });
+            
+            fetch('/admin/content/features', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ features })
+            }).then(() => {
+                alert('Features saved successfully!');
+                location.reload();
+            });
+        }
+        
+        function uploadLogo(input) {
+            if (!input.files || !input.files[0]) return;
+            
+            const formData = new FormData();
+            formData.append('logo', input.files[0]);
+            
+            fetch('/admin/content/logo', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Logo uploaded successfully!');
+                    location.reload();
+                } else {
+                    alert('Error uploading logo: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                alert('Error uploading logo: ' + err.message);
+            });
+        }
+        
+        function removeLogo() {
+            if (!confirm('Are you sure you want to remove the logo?')) return;
+            
+            fetch('/admin/content/logo', {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server returned ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Logo removed successfully!');
+                    location.reload();
+                } else {
+                    alert('Error removing logo: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                alert('Error removing logo: ' + err.message);
+                // If session expired, redirect to login
+                if (err.message.includes('401') || err.message.includes('403')) {
+                    window.location.href = '/login?redirect=/admin/content';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

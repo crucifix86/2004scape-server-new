@@ -30,6 +30,22 @@ const ServerOps: CommandHandlers = {
         state.pushInt(Environment.NODE_MEMBERS ? 1 : 0);
     },
 
+    [ScriptOpcode.SERVER_SHOPPRICE]: state => {
+        // Returns: 0 = normal, 1 = reduced (50%), 2 = free
+        if (Environment.SHOP_PRICES === 'free') {
+            state.pushInt(2);
+        } else if (Environment.SHOP_PRICES === 'reduced') {
+            state.pushInt(1);
+        } else {
+            state.pushInt(0); // normal
+        }
+    },
+
+    [ScriptOpcode.SERVER_STARTINGGOLD]: state => {
+        // Returns the configured starting gold amount
+        state.pushInt(Environment.STARTING_GOLD);
+    },
+
     [ScriptOpcode.MAP_PLAYERCOUNT]: state => {
         const [c1, c2] = state.popInts(2);
 

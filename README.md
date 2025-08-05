@@ -35,6 +35,33 @@ Content developers should run `npm start`. The server will watch for changes to 
 
 Engine developers should run `npm run dev`. This does what `npm start` does above, but also completely restarts the server when engine code has changed.
 
+## Server Management
+
+Use the `./server` script to manage both game and login servers:
+
+- **./server start** - Starts both the game server (port 8888) and login server (port 43500)
+- **./server stop** - Stops both servers cleanly
+- **./server restart** - Restarts both servers
+- **./server status** - Shows current status of both servers
+
+The script handles port conflicts automatically by running the login server's management interface on port 8899.
+
+## Developer Commands
+
+Developer access is controlled via the `data/developers.txt` file. Add usernames (one per line) to grant developer privileges.
+
+Available developer commands (use :: prefix in game chat):
+- **::testdev** - Shows your current developer access level
+- **::devcoins** - Adds 100,000 coins to your inventory
+- **::devfood** - Adds 20 sharks to your inventory  
+- **::devrune** - Completes Dragon Slayer quest, sets combat stats to level 40, and adds full rune armor set
+- **::resetstats** - Resets all combat stats back to level 1 (HP to 10)
+- **::bank** - Opens the bank interface from anywhere
+- **::banksearch <item name>** - Searches your bank for items matching the name
+- **::depositall** - Deposits all items from inventory to bank
+
+Note: These commands require developer access level 2 or higher.
+
 ## Common Issues
 
 * `bad option: --import`  

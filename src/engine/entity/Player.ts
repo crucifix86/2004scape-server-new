@@ -499,6 +499,8 @@ export default class Player extends PathingEntity {
         if (loginTrigger) {
             this.executeScript(ScriptRunner.init(loginTrigger, this), true);
         }
+        
+        // Starting gold is now handled by talking to Bob in Lumbridge
 
         this.lastStepX = this.x - 1;
         this.lastStepZ = this.z;

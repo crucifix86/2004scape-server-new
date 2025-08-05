@@ -1,6 +1,7 @@
 import { Visibility } from '@2004scape/rsbuf';
 import { LocAngle, LocShape } from '@2004scape/rsmod-pathfinder';
 
+import BankSearch from '#/engine/BankSearch.js';
 import Component from '#/cache/config/Component.js';
 import IdkType from '#/cache/config/IdkType.js';
 import InvType from '#/cache/config/InvType.js';
@@ -13,6 +14,7 @@ import SpotanimType from '#/cache/config/SpotanimType.js';
 import VarPlayerType from '#/cache/config/VarPlayerType.js';
 import { CoordGrid } from '#/engine/CoordGrid.js';
 import { EntityLifeCycle } from '#/engine/entity/EntityLifeCycle.js';
+import ItemTooltips from '#/engine/ItemTooltips.js';
 import Loc from '#/engine/entity/Loc.js';
 import { MoveStrategy } from '#/engine/entity/MoveStrategy.js';
 import { isClientConnected } from '#/engine/entity/NetworkPlayer.js';
@@ -45,6 +47,277 @@ export default class ClientCheatHandler extends MessageHandler<ClientCheat> {
 
         if (player.staffModLevel >= 2) {
             player.addSessionLog(LoggerEventType.MODERATOR, 'Ran cheat', cheat);
+        }
+        
+        // Custom dev commands  
+        if (cmd === 'testdev') {
+            player.messageGame('Your dev level is: ' + player.staffModLevel);
+            return true;
+        }
+        
+        if (cmd === 'devcoins' && player.staffModLevel >= 2) {
+            try {
+                player.messageGame('Adding coins...');
+                // Use the correct invAdd method from the player
+                const invType = InvType.get(InvType.INV);
+                if (!invType) {
+                    player.messageGame('Inventory type not found');
+                    return true;
+                }
+                const added = player.invAdd(invType.id, 995, 100000);
+                player.messageGame('Added ' + added + ' coins to inventory!');
+            } catch (e: any) {
+                player.messageGame('Error: ' + e.message);
+            }
+            return true;
+        }
+        
+        if (cmd === 'devfood' && player.staffModLevel >= 2) {
+            try {
+                const invType = InvType.get(InvType.INV);
+                if (!invType) {
+                    player.messageGame('Inventory type not found');
+                    return true;
+                }
+                // Add sharks
+                const added = player.invAdd(invType.id, 385, 20);
+                player.messageGame('Added ' + added + ' sharks!');
+            } catch (e: any) {
+                player.messageGame('Error: ' + e.message);
+            }
+            return true;
+        }
+        
+        if (cmd === 'devstats' && player.staffModLevel >= 2) {
+            try {
+                player.messageGame('Setting all combat stats to 99...');
+                
+                // Set all combat-related stats to 99
+                player.levels[PlayerStat.ATTACK] = 99;
+                player.baseLevels[PlayerStat.ATTACK] = 99;
+                player.levels[PlayerStat.DEFENCE] = 99;
+                player.baseLevels[PlayerStat.DEFENCE] = 99;
+                player.levels[PlayerStat.STRENGTH] = 99;
+                player.baseLevels[PlayerStat.STRENGTH] = 99;
+                player.levels[PlayerStat.HITPOINTS] = 99;
+                player.baseLevels[PlayerStat.HITPOINTS] = 99;
+                player.levels[PlayerStat.RANGED] = 99;
+                player.baseLevels[PlayerStat.RANGED] = 99;
+                player.levels[PlayerStat.PRAYER] = 99;
+                player.baseLevels[PlayerStat.PRAYER] = 99;
+                player.levels[PlayerStat.MAGIC] = 99;
+                player.baseLevels[PlayerStat.MAGIC] = 99;
+                
+                // Update the client
+                for (let i = 0; i < 7; i++) {
+                    player.updateStat(i);
+                }
+                
+                player.messageGame('All combat stats set to 99!');
+                player.messageGame('You can now equip any items.');
+            } catch (e: any) {
+                player.messageGame('Error: ' + e.message);
+            }
+            return true;
+        }
+        
+        if (cmd === 'devrune' && player.staffModLevel >= 2) {
+            try {
+                player.messageGame('Completing Dragon Slayer quest...');
+                
+                // Find the Dragon Slayer quest variable and set it to complete
+                const dragonVar = VarPlayerType.getByName('dragon_progress');
+                if (dragonVar) {
+                    // Set dragon_progress to complete value (10 based on the script)
+                    player.setVar(dragonVar.id, 10);
+                    player.messageGame('Dragon Slayer quest completed!');
+                }
+                
+                // Boost both current AND base levels to 40 for equipping
+                player.messageGame('Setting combat stats to 40...');
+                // Set base levels (what equipment checks)
+                player.baseLevels[PlayerStat.ATTACK] = 40;
+                player.baseLevels[PlayerStat.DEFENCE] = 40;
+                player.baseLevels[PlayerStat.STRENGTH] = 40;
+                // Also set current levels to match
+                player.levels[PlayerStat.ATTACK] = 40;
+                player.levels[PlayerStat.DEFENCE] = 40;
+                player.levels[PlayerStat.STRENGTH] = 40;
+                
+                // Add rune items to inventory
+                const invType = InvType.get(InvType.INV);
+                if (!invType) {
+                    player.messageGame('Inventory type not found');
+                    return true;
+                }
+                
+                // Add rune equipment to inventory
+                player.invAdd(invType.id, 1163, 1); // Rune full helm
+                player.invAdd(invType.id, 1127, 1); // Rune platebody  
+                player.invAdd(invType.id, 1079, 1); // Rune platelegs
+                player.invAdd(invType.id, 1201, 1); // Rune kiteshield
+                player.invAdd(invType.id, 1333, 1); // Rune scimitar
+                
+                player.messageGame('Full rune set added to inventory!');
+                player.messageGame('Stats boosted to 40 - equip quickly!');
+                player.messageGame('Stats will return to normal soon.');
+            } catch (e: any) {
+                player.messageGame('Error: ' + e.message);
+            }
+            return true;
+        }
+        
+        if (cmd === 'resetstats' && player.staffModLevel >= 2) {
+            try {
+                player.messageGame('Resetting combat stats to level 1...');
+                
+                // Reset all combat stats to 1
+                player.baseLevels[PlayerStat.ATTACK] = 1;
+                player.baseLevels[PlayerStat.DEFENCE] = 1;
+                player.baseLevels[PlayerStat.STRENGTH] = 1;
+                player.baseLevels[PlayerStat.RANGED] = 1;
+                player.baseLevels[PlayerStat.PRAYER] = 1;
+                player.baseLevels[PlayerStat.MAGIC] = 1;
+                player.baseLevels[PlayerStat.HITPOINTS] = 10; // HP starts at 10
+                
+                // Reset current levels to match
+                player.levels[PlayerStat.ATTACK] = 1;
+                player.levels[PlayerStat.DEFENCE] = 1;
+                player.levels[PlayerStat.STRENGTH] = 1;
+                player.levels[PlayerStat.RANGED] = 1;
+                player.levels[PlayerStat.PRAYER] = 1;
+                player.levels[PlayerStat.MAGIC] = 1;
+                player.levels[PlayerStat.HITPOINTS] = 10;
+                
+                // Reset experience too
+                player.stats[PlayerStat.ATTACK] = 0;
+                player.stats[PlayerStat.DEFENCE] = 0;
+                player.stats[PlayerStat.STRENGTH] = 0;
+                player.stats[PlayerStat.RANGED] = 0;
+                player.stats[PlayerStat.PRAYER] = 0;
+                player.stats[PlayerStat.MAGIC] = 0;
+                player.stats[PlayerStat.HITPOINTS] = 1154; // XP for level 10
+                
+                player.messageGame('All combat stats reset to level 1!');
+                player.messageGame('Note: You may need to unequip items first.');
+            } catch (e: any) {
+                player.messageGame('Error: ' + e.message);
+            }
+            return true;
+        }
+        
+        if (cmd === 'banksearch' && player.staffModLevel >= 2) {
+            const searchTerm = args.join(' ');
+            if (!searchTerm) {
+                player.messageGame('Usage: ::banksearch <item name>');
+                return true;
+            }
+            
+            // Search bank for items matching the search term
+            const bankInvType = InvType.getByName('bank');
+            if (!bankInvType) {
+                player.messageGame('Bank inventory type not found.');
+                return true;
+            }
+            const bank = player.getInventory(bankInvType.id);
+            if (!bank) {
+                player.messageGame('Could not access bank inventory.');
+                return true;
+            }
+            
+            player.messageGame(`Searching bank for: ${searchTerm}`);
+            const results = BankSearch.searchBank(bank, { searchTerm });
+            
+            if (results.length === 0) {
+                player.messageGame('No items found matching your search.');
+            } else {
+                player.messageGame(`Found ${results.length} matching items:`);
+                for (const slot of results.slice(0, 10)) { // Show max 10 results
+                    const obj = bank.get(slot);
+                    if (obj) {
+                        const objType = ObjType.get(obj.id);
+                        const count = obj.count;
+                        player.messageGame(`- ${objType.name} x${count} (slot ${slot})`);
+                    }
+                }
+                if (results.length > 10) {
+                    player.messageGame(`... and ${results.length - 10} more items.`);
+                }
+            }
+            return true;
+        }
+        
+        if (cmd === 'depositall' && player.staffModLevel >= 2) {
+            // Deposit all items from inventory to bank
+            const bankInvType = InvType.getByName('bank');
+            if (!bankInvType) {
+                player.messageGame('Bank inventory type not found.');
+                return true;
+            }
+            
+            const inv = player.getInventory(InvType.INV);
+            const bank = player.getInventory(bankInvType.id);
+            
+            if (!inv || !bank) {
+                player.messageGame('Could not access inventories.');
+                return true;
+            }
+            
+            let deposited = 0;
+            for (let slot = 0; slot < inv.capacity; slot++) {
+                const item = inv.get(slot);
+                if (item && item.id !== -1) {
+                    // Try to deposit this item
+                    const objType = ObjType.get(item.id);
+                    if (objType) {
+                        // Check if item is bankable (tradeable items can be banked)
+                        if (objType.tradeable) {
+                            const moved = player.invMoveToInv(InvType.INV, bankInvType.id, item.id, item.count);
+                            if (moved > 0) {
+                                deposited++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (deposited > 0) {
+                player.messageGame(`Deposited ${deposited} item stacks to bank.`);
+            } else {
+                player.messageGame('No items to deposit.');
+            }
+            return true;
+        }
+        
+        if (cmd === 'bank' && player.staffModLevel >= 2) {
+            // Quick command to open bank anywhere
+            player.messageGame('Opening bank...');
+            // Trigger the bank opening script
+            const script = ScriptProvider.getByName('[label,openbank]');
+            if (script) {
+                ScriptRunner.init(script, player);
+                player.executeScript(ScriptRunner.getCurrentScript(), false, false);
+            } else {
+                player.messageGame('Could not open bank.');
+            }
+            return true;
+        }
+        
+        if (cmd === 'devshop' && player.staffModLevel >= 2) {
+            // Try to open the dev shop directly
+            const shopInv = InvType.getByName('devshop');
+            if (!shopInv) {
+                player.messageGame('Dev shop not found!');
+                return false;
+            }
+            player.messageGame('Opening dev shop...');
+            // Try using the openshop proc
+            const script = ScriptProvider.getByName('[proc,openshop]');
+            if (script) {
+                player.activeScript = script;
+                player.executeScript(script, false, false);
+            }
+            return true;
         }
 
         if (!Environment.NODE_PRODUCTION && player.staffModLevel >= 4) {
@@ -294,6 +567,85 @@ export default class ClientCheatHandler extends MessageHandler<ClientCheat> {
 
                 const count = Math.max(1, Math.min(tryParseInt(args[1], 1), 0x7fffffff));
                 player.invAdd(InvType.INV, obj, count, false);
+            } else if (cmd === 'banksearch') {
+                // custom - search bank for items
+                if (args.length < 1) {
+                    player.messageGame('Usage: ::banksearch <item name>');
+                    return false;
+                }
+                
+                const searchTerm = args.join(' ');
+                const bank = player.getInventory(InvType.BANK);
+                if (!bank) {
+                    player.messageGame('Bank not found.');
+                    return false;
+                }
+                
+                const results = BankSearch.searchBank(bank, { searchTerm });
+                if (results.length === 0) {
+                    player.messageGame(`No items found matching "${searchTerm}"`);
+                } else {
+                    player.messageGame(`Found ${results.length} items matching "${searchTerm}":`);
+                    for (let i = 0; i < Math.min(5, results.length); i++) {
+                        const item = bank.get(results[i]);
+                        if (item) {
+                            const objType = ObjType.get(item.id);
+                            player.messageGame(`- ${objType.name} x${item.count} (slot ${results[i]})`);
+                        }
+                    }
+                    if (results.length > 5) {
+                        player.messageGame(`... and ${results.length - 5} more`);
+                    }
+                }
+                
+                // Add to search history
+                BankSearch.addToHistory(player.username, searchTerm);
+            } else if (cmd === 'bankstats') {
+                // custom - show bank statistics
+                const bank = player.getInventory(InvType.BANK);
+                if (!bank) {
+                    player.messageGame('Bank not found.');
+                    return false;
+                }
+                
+                const stats = BankSearch.getBankStats(bank);
+                player.messageGame('=== Bank Statistics ===');
+                player.messageGame(`Total stacks: ${stats.totalStacks}`);
+                player.messageGame(`Total items: ${stats.totalItems}`);
+                player.messageGame(`Total value: ${stats.totalValue} gp`);
+                if (stats.mostValuableItem) {
+                    player.messageGame(`Most valuable: ${stats.mostValuableItem.name} (${stats.mostValuableItem.value} gp)`);
+                }
+            } else if (cmd === 'testeffect') {
+                // custom - test item visual effects
+                player.messageGame('Testing visual effects at your location...');
+                
+                // Create sparkle effect at player location
+                const script = ScriptProvider.getByName('[proc,test_sparkle_effect]');
+                if (script) {
+                    const state = ScriptRunner.init(script, player);
+                    ScriptRunner.execute(state);
+                } else {
+                    player.messageGame('Effect script not found.');
+                }
+            } else if (cmd === 'itemtooltip') {
+                // custom - show enhanced tooltip for item
+                if (args.length < 1) {
+                    player.messageGame('Usage: ::itemtooltip <item name>');
+                    return false;
+                }
+                
+                const obj = ObjType.getId(args[0]);
+                if (obj === -1) {
+                    player.messageGame('Item not found.');
+                    return false;
+                }
+                
+                const tooltip = ItemTooltips.generateTooltip(obj);
+                for (const line of tooltip) {
+                    // Remove color codes for chat messages
+                    player.messageGame(line.replace(/§./g, ''));
+                }
             } else if (cmd === 'giveother' && Environment.NODE_PRODUCTION) {
                 // custom
                 if (args.length < 2) {

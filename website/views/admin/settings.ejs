@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Settings - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header .user-info {
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .nav {
+            background: #2a2a2a;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            padding: 15px;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: #3a3a3a;
+        }
+        
+        .nav a.active {
+            background: #444;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .server-status {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.offline {
+            background: #f44336;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .setting-item {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .setting-item label {
+            display: block;
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .setting-item input, .setting-item select {
+            width: 100%;
+            padding: 8px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 3px;
+        }
+        
+        .setting-item .description {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-save {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .btn-save:hover {
+            background: #45a049;
+        }
+        
+        .btn-restart {
+            background: #ff9800;
+            color: #fff;
+        }
+        
+        .btn-restart:hover {
+            background: #e68900;
+        }
+        
+        .logout {
+            float: right;
+            background: #ff4444;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .logout:hover {
+            background: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>⚙️ Server Settings</h1>
+        <div class="user-info">
+            Logged in as: <strong><%= user.username %></strong> 
+            (<%= user.staffmodlevel >= 4 ? 'Developer' : user.staffmodlevel >= 3 ? 'Admin' : 'Moderator' %>)
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin">📊 Dashboard</a>
+        <a href="/admin/players">👥 Players</a>
+        <a href="/admin/bans">🔨 Bans & Mutes</a>
+        <a href="/admin/reports">⚠️ Reports</a>
+        <a href="/admin/chat">💬 Chat Logs</a>
+        <a href="/admin/mod_logs">📝 Mod Logs</a>
+        <a href="/admin/settings" class="active">⚙️ Settings</a>
+        <a href="/admin/news">📰 News</a>
+        <a href="/admin/content">🎨 Content</a>
+        <a href="/">🏠 Back to Site</a>
+    </div>
+    
+    <div class="container">
+        <div class="server-status">
+            <div class="status-indicator">
+                <div class="status-dot <%= serverOnline ? '' : 'offline' %>"></div>
+                <span>Server Status: <strong><%= serverOnline ? 'Online' : 'Offline' %></strong></span>
+            </div>
+            <% if (user.staffmodlevel >= 4) { %>
+                <div>
+                    <button class="btn btn-restart" onclick="if(confirm('Are you sure you want to restart the server?')) { restartServer(); }">🔄 Restart Server</button>
+                </div>
+            <% } %>
+        </div>
+        
+        <form method="POST" action="/admin/settings">
+            <div class="panel">
+                <h2>Game Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>XP Rate</label>
+                        <input type="number" name="xp_rate" value="<%= settings.xp_rate || 1 %>" min="1" max="100">
+                        <div class="description">Experience multiplier (1 = normal)</div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Drop Rate</label>
+                        <input type="number" name="drop_rate" value="<%= settings.drop_rate || 1 %>" min="1" max="100">
+                        <div class="description">Drop rate multiplier (1 = normal)</div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Max Players</label>
+                        <input type="number" name="max_players" value="<%= settings.max_players || 2000 %>" min="1" max="5000">
+                        <div class="description">Maximum concurrent players</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>Economy Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Starting Gold</label>
+                        <input type="number" name="starting_gold" value="<%= settings.starting_gold || 0 %>" min="0">
+                        <div class="description">Gold given to new players</div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Shop Prices</label>
+                        <select name="shop_prices">
+                            <option value="normal" <%= settings.shop_prices === 'normal' ? 'selected' : '' %>>Normal</option>
+                            <option value="reduced" <%= settings.shop_prices === 'reduced' ? 'selected' : '' %>>Reduced (50%)</option>
+                            <option value="free" <%= settings.shop_prices === 'free' ? 'selected' : '' %>>Discount (99%)</option>
+                        </select>
+                        <div class="description">NPC shop price modifier</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>Security Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Allow Registration</label>
+                        <select name="allow_registration">
+                            <option value="true" <%= settings.allow_registration !== 'false' ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= settings.allow_registration === 'false' ? 'selected' : '' %>>No</option>
+                        </select>
+                        <div class="description">Allow new account creation</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>Spam Protection Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Enable Akismet</label>
+                        <select name="akismet_enabled" onchange="toggleAkismetSettings(this.value)">
+                            <option value="true" <%= settings.akismet_enabled === 'true' ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= settings.akismet_enabled !== 'true' ? 'selected' : '' %>>No</option>
+                        </select>
+                        <div class="description">Enable Akismet spam protection for registrations</div>
+                    </div>
+                    <div class="setting-item" id="akismet_key_setting" style="<%= settings.akismet_enabled !== 'true' ? 'display: none;' : '' %>">
+                        <label>Akismet API Key</label>
+                        <input type="password" name="akismet_api_key" value="<%= settings.akismet_api_key || '' %>" placeholder="Enter your Akismet API key">
+                        <div class="description">Get your API key from <a href="https://akismet.com/signup/" target="_blank" style="color: #ffd700;">akismet.com</a></div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>Enable Project Honeypot</label>
+                        <select name="honeypot_enabled" onchange="toggleHoneypotSettings(this.value)">
+                            <option value="true" <%= settings.honeypot_enabled === 'true' ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= settings.honeypot_enabled !== 'true' ? 'selected' : '' %>>No</option>
+                        </select>
+                        <div class="description">Enable Project Honeypot IP reputation checking</div>
+                    </div>
+                    <div class="setting-item" id="honeypot_key_setting" style="<%= settings.honeypot_enabled !== 'true' ? 'display: none;' : '' %>">
+                        <label>Project Honeypot API Key</label>
+                        <input type="password" name="honeypot_api_key" value="<%= settings.honeypot_api_key || '' %>" placeholder="Enter your Project Honeypot API key">
+                        <div class="description">Get your API key from <a href="https://www.projecthoneypot.org/httpbl_api.php" target="_blank" style="color: #ffd700;">projecthoneypot.org</a></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2>Performance Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>Hiscores Update Interval</label>
+                        <input type="number" name="hiscores_update_interval" value="<%= settings.hiscores_update_interval || 5 %>" min="1" max="60">
+                        <div class="description">Minutes between hiscores updates (1-60)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="btn btn-save">💾 Save Settings</button>
+            </div>
+        </form>
+        
+        <% if (user.staffmodlevel >= 4 && permissions && permissions.length > 0) { %>
+            <form method="POST" action="/admin/permissions" style="margin-top: 30px;">
+                <div class="panel">
+                    <h2>Moderator Permissions</h2>
+                    <p style="color: #888; margin-bottom: 15px;">Control what moderators can access in the admin panel</p>
+                    
+                    <% permissions.forEach(perm => { %>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" name="permissions[<%= perm.permission_key %>]" <%= perm.enabled ? 'checked' : '' %> style="width: auto;">
+                                <span><%= perm.permission_name %></span>
+                            </label>
+                            <div class="description"><%= perm.permission_description %></div>
+                        </div>
+                    <% }); %>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="submit" class="btn btn-save">💾 Save Permissions</button>
+                </div>
+            </form>
+        <% } %>
+    </div>
+    
+    <script>
+        function toggleAkismetSettings(enabled) {
+            const keyField = document.getElementById('akismet_key_setting');
+            keyField.style.display = enabled === 'true' ? 'block' : 'none';
+        }
+        
+        function toggleHoneypotSettings(enabled) {
+            const keyField = document.getElementById('honeypot_key_setting');
+            keyField.style.display = enabled === 'true' ? 'block' : 'none';
+        }
+        
+        function restartServer() {
+            // Show restart in progress
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.querySelector('.status-indicator strong');
+            statusDot.classList.remove('offline');
+            statusDot.style.background = '#ff9800';
+            statusText.textContent = 'Restarting...';
+            
+            fetch('/admin/restart_server', { method: 'POST' })
+                .then(() => {
+                    // Start checking server status
+                    let checkCount = 0;
+                    const maxChecks = 30; // 30 seconds max
+                    
+                    const checkInterval = setInterval(() => {
+                        fetch('/admin/settings')
+                            .then(response => {
+                                if (response.ok) {
+                                    // Server is back online
+                                    clearInterval(checkInterval);
+                                    statusDot.style.background = '#4CAF50';
+                                    statusText.textContent = 'Online';
+                                    
+                                    // Show success message
+                                    const successMsg = document.createElement('div');
+                                    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 9999;';
+                                    successMsg.innerHTML = '✅ Server restart completed successfully!';
+                                    document.body.appendChild(successMsg);
+                                    
+                                    setTimeout(() => {
+                                        successMsg.remove();
+                                        location.reload();
+                                    }, 3000);
+                                }
+                            })
+                            .catch(() => {
+                                // Server still down
+                                checkCount++;
+                                if (checkCount >= maxChecks) {
+                                    clearInterval(checkInterval);
+                                    statusDot.classList.add('offline');
+                                    statusDot.style.background = '#f44336';
+                                    statusText.textContent = 'Offline';
+                                    alert('Server restart may have failed. Please check server logs.');
+                                }
+                            });
+                    }, 1000); // Check every second
+                })
+                .catch(() => {
+                    statusDot.classList.add('offline');
+                    statusDot.style.background = '#f44336';
+                    statusText.textContent = 'Offline';
+                    alert('Failed to initiate server restart.');
+                });
+        }
+        
+        function updateSetting(key, value) {
+            fetch('/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key, value: value || '' })
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Reports - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header .user-info {
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .nav {
+            background: #2a2a2a;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            padding: 15px;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: #3a3a3a;
+        }
+        
+        .nav a.active {
+            background: #444;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #1a1a1a;
+            padding: 10px;
+            text-align: left;
+            color: #ffd700;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        tr:hover {
+            background: #333;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-offensive {
+            background: #f44336;
+            color: #fff;
+        }
+        
+        .badge-scamming {
+            background: #ff9800;
+            color: #fff;
+        }
+        
+        .badge-bug {
+            background: #9C27B0;
+            color: #fff;
+        }
+        
+        .badge-macroing {
+            background: #3F51B5;
+            color: #fff;
+        }
+        
+        .badge-advertising {
+            background: #607D8B;
+            color: #fff;
+        }
+        
+        .logout {
+            float: right;
+            background: #ff4444;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .logout:hover {
+            background: #ff6666;
+        }
+        
+        .info-box {
+            background: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>⚠️ Player Reports</h1>
+        <div class="user-info">
+            Logged in as: <strong><%= user.username %></strong> 
+            (<%= user.staffmodlevel >= 4 ? 'Developer' : user.staffmodlevel >= 3 ? 'Admin' : 'Moderator' %>)
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin">📊 Dashboard</a>
+        <a href="/admin/players">👥 Players</a>
+        <a href="/admin/bans">🔨 Bans & Mutes</a>
+        <a href="/admin/reports" class="active">⚠️ Reports</a>
+        <a href="/admin/chat">💬 Chat Logs</a>
+        <a href="/admin/mod_logs">📝 Mod Logs</a>
+        <a href="/admin/settings">⚙️ Settings</a>
+        <a href="/admin/news">📰 News</a>
+        <a href="/admin/content">🎨 Content</a>
+        <a href="/">🏠 Back to Site</a>
+    </div>
+    
+    <div class="container">
+        <div class="info-box">
+            <strong>Report Categories:</strong><br>
+            1. Offensive Language | 2. Item Scamming | 3. Password Scamming | 4. Bug Abuse | 5. Staff Impersonation<br>
+            6. Account Sharing | 7. Macroing | 8. Multiple Logging | 9. Encouraging Rule Breaking<br>
+            10. Advertising | 11. Real World Trading | 12. Sharing Personal Details | 13. Other
+        </div>
+        
+        <div class="panel">
+            <h2>Recent Player Reports</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Reporter</th>
+                        <th>Reported Player</th>
+                        <th>Category</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (reports && reports.length > 0) { %>
+                        <% reports.forEach(report => { %>
+                            <tr>
+                                <td><%= report.timestamp %></td>
+                                <td><%= report.reporter %></td>
+                                <td><strong><%= report.reported %></strong></td>
+                                <td>
+                                    <% const categories = {
+                                        1: 'Offensive Language',
+                                        2: 'Item Scamming',
+                                        3: 'Password Scamming',
+                                        4: 'Bug Abuse',
+                                        5: 'Staff Impersonation',
+                                        6: 'Account Sharing',
+                                        7: 'Macroing',
+                                        8: 'Multiple Logging',
+                                        9: 'Encouraging Rule Breaking',
+                                        10: 'Advertising',
+                                        11: 'Real World Trading',
+                                        12: 'Sharing Personal Details',
+                                        13: 'Other'
+                                    }; %>
+                                    <span class="badge badge-offensive">
+                                        <%= categories[report.category] || 'Unknown' %>
+                                    </span>
+                                </td>
+                                <td><%= report.details || 'No details provided' %></td>
+                                <td><%= report.reviewed ? 'Reviewed' : 'Pending' %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No reports available - Report system needs to be implemented in game</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

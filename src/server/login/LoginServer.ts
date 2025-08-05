@@ -16,6 +16,20 @@ import { printInfo } from '#/util/Logger.js';
 import { getUnreadMessageCount } from '#/util/Messages.js';
 import { startManagementWeb } from '#/web.js';
 
+// Load developer usernames from file
+function isDeveloper(username: string): boolean {
+    try {
+        const devFile = fs.readFileSync('data/developers.txt', 'utf8');
+        const devUsernames = devFile.split('\n')
+            .filter(line => line.trim() && !line.trim().startsWith('#'))
+            .map(line => line.trim().toLowerCase());
+        return devUsernames.includes(username.toLowerCase());
+    } catch (err) {
+        // If file doesn't exist or can't be read, no developers
+        return false;
+    }
+}
+
 async function updateHiscores(username: string, player: Player, profile: string) {
     const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirstOrThrow();
 
@@ -187,29 +201,6 @@ export default class LoginServer {
 
                             const account = await db.selectFrom('account').where('username', '=', username).selectAll().executeTakeFirst();
 
-                            if (!Environment.WEBSITE_REGISTRATION && !account) {
-                                // register the user automatically
-                                const insertResult = await db
-                                    .insertInto('account')
-                                    .values({
-                                        username,
-                                        password: bcrypt.hashSync(password.toLowerCase(), 10),
-                                        registration_ip: remoteAddress,
-                                        registration_date: toDbDate(new Date())
-                                    })
-                                    .executeTakeFirst();
-
-                                s.send(
-                                    JSON.stringify({
-                                        replyTo,
-                                        response: 4,
-                                        staffmodlevel: 0,
-                                        account_id: Number(insertResult.insertId),  // bigint
-                                    })
-                                );
-                                return;
-                            }
-
                             if (account) {
                                 const recent = await db
                                     .selectFrom('login')
@@ -299,6 +290,9 @@ export default class LoginServer {
                                     .execute();
 
                                 const messageCount = await getUnreadMessageCount(account.id);
+                                
+                                // Check if user is in developers.txt
+                                const developerLevel = isDeveloper(username) ? 2 : account.staffmodlevel;
 
                                 if (!hasSave) {
                                     const save = await fsp.readFile(`data/players/${profile}/${username}.sav`);
@@ -312,7 +306,7 @@ export default class LoginServer {
                                             replyTo,
                                             response: 2,
                                             account_id: account.id,
-                                            staffmodlevel: account.staffmodlevel,
+                                            staffmodlevel: developerLevel,
                                             muted_until: account.muted_until,
                                             save: save.toString('base64'),
                                             members: account.members,
@@ -325,7 +319,7 @@ export default class LoginServer {
                                             replyTo,
                                             response: 2,
                                             account_id: account.id,
-                                            staffmodlevel: account.staffmodlevel,
+                                            staffmodlevel: developerLevel,
                                             muted_until: account.muted_until,
                                             members: account.members,
                                             messageCount

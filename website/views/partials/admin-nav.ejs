@@ -1,0 +1,28 @@
+<div class="nav">
+    <a href="/admin">📊 Dashboard</a>
+    <% if (hasPermission('view_players')) { %>
+        <a href="/admin/players" class="<%= typeof activePage !== 'undefined' && activePage === 'players' ? 'active' : '' %>">👥 Players</a>
+    <% } %>
+    <% if (hasPermission('ban_players') || hasPermission('mute_players')) { %>
+        <a href="/admin/bans" class="<%= typeof activePage !== 'undefined' && activePage === 'bans' ? 'active' : '' %>">🔨 Bans & Mutes</a>
+    <% } %>
+    <% if (hasPermission('view_reports')) { %>
+        <a href="/admin/reports" class="<%= typeof activePage !== 'undefined' && activePage === 'reports' ? 'active' : '' %>">⚠️ Reports</a>
+    <% } %>
+    <% if (hasPermission('view_chat_logs')) { %>
+        <a href="/admin/chat" class="<%= typeof activePage !== 'undefined' && activePage === 'chat' ? 'active' : '' %>">💬 Chat Logs</a>
+    <% } %>
+    <% if (hasPermission('view_mod_logs')) { %>
+        <a href="/admin/mod_logs" class="<%= typeof activePage !== 'undefined' && activePage === 'mod_logs' ? 'active' : '' %>">📝 Mod Logs</a>
+    <% } %>
+    <% if (hasPermission('view_settings')) { %>
+        <a href="/admin/settings" class="<%= typeof activePage !== 'undefined' && activePage === 'settings' ? 'active' : '' %>">⚙️ Settings</a>
+    <% } %>
+    <% if (hasPermission('manage_news')) { %>
+        <a href="/admin/news" class="<%= typeof activePage !== 'undefined' && activePage === 'news' ? 'active' : '' %>">📰 News</a>
+    <% } %>
+    <% if (hasPermission('manage_content')) { %>
+        <a href="/admin/content" class="<%= typeof activePage !== 'undefined' && activePage === 'content' ? 'active' : '' %>">🎨 Content</a>
+    <% } %>
+    <a href="/">🏠 Back to Site</a>
+</div>

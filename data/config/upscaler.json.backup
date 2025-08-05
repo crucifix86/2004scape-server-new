@@ -1,0 +1,18 @@
+{
+    "enabled": true,
+    "scale": 2,
+    "algorithm": "bicubic",
+    "sharpen": true,
+    "enhance": true,
+    "cache": true,
+    "textures": {
+        "door": { "sharpen": true, "enhance": true },
+        "water": { "sharpen": false, "enhance": true },
+        "wall": { "sharpen": true, "enhance": true },
+        "planks": { "sharpen": true, "enhance": true },
+        "bark": { "sharpen": true, "enhance": true },
+        "leafytree": { "sharpen": false, "enhance": true },
+        "rockwall": { "sharpen": true, "enhance": false },
+        "chainmail": { "sharpen": true, "enhance": false }
+    }
+}

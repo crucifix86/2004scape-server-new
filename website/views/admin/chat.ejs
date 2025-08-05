@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Logs - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header .user-info {
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .nav {
+            background: #2a2a2a;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            padding: 15px;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: #3a3a3a;
+        }
+        
+        .nav a.active {
+            background: #444;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .search-bar {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-bar input, .search-bar select {
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+        }
+        
+        .search-bar button {
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .search-bar button:hover {
+            background: #ffed4e;
+        }
+        
+        .panel {
+            background: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        .chat-log {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .chat-message {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #2a2a2a;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .chat-message:hover {
+            background: #333;
+        }
+        
+        .chat-time {
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .chat-username {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .chat-public {
+            color: #fff;
+        }
+        
+        .chat-private {
+            color: #00bfff;
+        }
+        
+        .chat-trade {
+            color: #ff69b4;
+        }
+        
+        .chat-broadcast {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .logout {
+            float: right;
+            background: #ff4444;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .logout:hover {
+            background: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>💬 Chat Logs</h1>
+        <div class="user-info">
+            Logged in as: <strong><%= user.username %></strong> 
+            (<%= user.staffmodlevel >= 4 ? 'Developer' : user.staffmodlevel >= 3 ? 'Admin' : 'Moderator' %>)
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin">📊 Dashboard</a>
+        <a href="/admin/players">👥 Players</a>
+        <a href="/admin/bans">🔨 Bans & Mutes</a>
+        <a href="/admin/reports">⚠️ Reports</a>
+        <a href="/admin/chat" class="active">💬 Chat Logs</a>
+        <a href="/admin/mod_logs">📝 Mod Logs</a>
+        <a href="/admin/settings">⚙️ Settings</a>
+        <a href="/admin/news">📰 News</a>
+        <a href="/admin/content">🎨 Content</a>
+        <a href="/">🏠 Back to Site</a>
+    </div>
+    
+    <div class="container">
+        <div class="panel" style="background: #1a1a1a; margin-bottom: 20px;">
+            <h2 style="color: #ffd700;">📢 Broadcast System Message</h2>
+            <form method="POST" action="/admin/broadcast" style="display: flex; gap: 10px;">
+                <input type="text" name="message" placeholder="Enter system message to broadcast to all players..." 
+                       style="flex: 1; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 5px;" required>
+                <button type="submit" style="padding: 10px 20px; background: #ff6b6b; color: #fff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                    Broadcast Message
+                </button>
+            </form>
+        </div>
+        
+        <div class="search-bar">
+            <form method="GET" action="/admin/chat" style="display: flex; gap: 10px; flex: 1;">
+                <input type="text" name="search" placeholder="Search by username or message..." value="<%= search %>">
+                <select name="filter">
+                    <option value="all" <%= filter === 'all' ? 'selected' : '' %>>All Chats</option>
+                    <option value="public" <%= filter === 'public' ? 'selected' : '' %>>Public Only</option>
+                    <option value="private" <%= filter === 'private' ? 'selected' : '' %>>Private Only</option>
+                    <option value="broadcast" <%= filter === 'broadcast' ? 'selected' : '' %>>Broadcasts Only</option>
+                </select>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        
+        <div class="panel">
+            <h2>Recent Chat Activity</h2>
+            <div class="chat-log">
+                <% if (chats && chats.length > 0) { %>
+                    <% chats.forEach(chat => { %>
+                        <div class="chat-message">
+                            <span class="chat-time">[<%= new Date(chat.timestamp).toLocaleString() %>]</span>
+                            <% if (chat.chat_type === 'broadcast') { %>
+                                <span style="color: #ff6b6b;">[BROADCAST]</span>
+                            <% } %>
+                            <span class="chat-username" style="<%= chat.staffmodlevel >= 2 ? 'color: #ffd700;' : '' %>">
+                                <%= chat.username %>:
+                            </span>
+                            <span class="chat-<%= chat.chat_type %>">
+                                <%= chat.message %>
+                            </span>
+                            <% if (chat.target_username) { %>
+                                <span style="color: #888;"> → <%= chat.target_username %></span>
+                            <% } %>
+                        </div>
+                    <% }); %>
+                    
+                    <% if (totalPages > 1) { %>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <% if (page > 1) { %>
+                                <a href="/admin/chat?page=<%= page - 1 %>&search=<%= encodeURIComponent(search) %>&filter=<%= filter %>" 
+                                   style="padding: 5px 10px; background: #444; color: #fff; text-decoration: none; border-radius: 3px; margin: 0 5px;">← Previous</a>
+                            <% } %>
+                            <span style="color: #888; margin: 0 10px;">Page <%= page %> of <%= totalPages %></span>
+                            <% if (page < totalPages) { %>
+                                <a href="/admin/chat?page=<%= page + 1 %>&search=<%= encodeURIComponent(search) %>&filter=<%= filter %>" 
+                                   style="padding: 5px 10px; background: #444; color: #fff; text-decoration: none; border-radius: 3px; margin: 0 5px;">Next →</a>
+                            <% } %>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div style="text-align: center; padding: 40px; color: #888;">
+                        <% if (search || filter !== 'all') { %>
+                            No chat logs found matching your search criteria.
+                        <% } else { %>
+                            No chat logs available yet. Chat messages will appear here once players start chatting.
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

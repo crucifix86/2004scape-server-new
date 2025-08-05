@@ -1,5 +1,7 @@
 import fs from 'fs';
-
+import path from 'path';
+import { fileURLToPath } from 'url';
+import Database from 'better-sqlite3';
 
 import { collectDefaultMetrics, register } from 'prom-client';
 
@@ -15,6 +17,48 @@ import { startManagementWeb, startWeb, web } from '#/web.js';
 
 if (Environment.BUILD_STARTUP_UPDATE) {
     await updateCompiler();
+}
+
+// Load settings from database
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dbPath = path.join(__dirname, '../db.sqlite');
+
+if (fs.existsSync(dbPath)) {
+    try {
+        const db = new Database(dbPath);
+        const settings = db.prepare('SELECT key, value FROM settings').all();
+        
+        for (const setting of settings) {
+            if (setting.key === 'xp_rate') {
+                const xpRate = parseInt(setting.value) || 1;
+                Environment.NODE_XPRATE = xpRate;
+                printInfo(`XP Rate set to ${xpRate}x from database`);
+            } else if (setting.key === 'drop_rate') {
+                // Store for future use when drop system is implemented
+                const dropRate = parseInt(setting.value) || 1;
+                // Environment.NODE_DROPRATE = dropRate; // Will need to add this to Environment.ts
+                printInfo(`Drop Rate setting loaded: ${dropRate}x (not yet implemented)`);
+            } else if (setting.key === 'starting_gold') {
+                const startingGold = parseInt(setting.value) || 0;
+                Environment.STARTING_GOLD = startingGold;
+                printInfo(`Starting gold set to ${startingGold} from database`);
+            } else if (setting.key === 'shop_prices') {
+                Environment.SHOP_PRICES = setting.value || 'normal';
+                printInfo(`Shop prices set to ${setting.value} from database`);
+            } else if (setting.key === 'allow_registration') {
+                Environment.ALLOW_REGISTRATION = setting.value === 'true';
+                printInfo(`Registration ${setting.value === 'true' ? 'enabled' : 'disabled'} from database`);
+            } else if (setting.key === 'max_players') {
+                Environment.NODE_MAX_PLAYERS = parseInt(setting.value) || 2000;
+                printInfo(`Max players set to ${setting.value} from database`);
+            }
+        }
+        
+        db.close();
+    } catch (err) {
+        printError('Failed to load settings from database: ' + err);
+    }
 }
 
 if (!fs.existsSync('data/pack/client/config') || !fs.existsSync('data/pack/server/script.dat')) {

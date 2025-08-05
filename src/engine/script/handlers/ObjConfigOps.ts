@@ -4,6 +4,7 @@ import ParamType from '#/cache/config/ParamType.js';
 import { ScriptOpcode } from '#/engine/script/ScriptOpcode.js';
 import { CommandHandlers } from '#/engine/script/ScriptRunner.js';
 import { check, ObjTypeValid, ParamTypeValid } from '#/engine/script/ScriptValidators.js';
+import Environment from '#/util/Environment.js';
 
 const ObjConfigOps: CommandHandlers = {
     [ScriptOpcode.OC_NAME]: state => {
@@ -53,7 +54,19 @@ const ObjConfigOps: CommandHandlers = {
     },
 
     [ScriptOpcode.OC_COST]: state => {
-        state.pushInt(check(state.popInt(), ObjTypeValid).cost);
+        let cost = check(state.popInt(), ObjTypeValid).cost;
+        
+        // Apply shop price settings globally when the setting is active
+        // This affects all shop calculations
+        if (Environment.SHOP_PRICES === 'free') {
+            // Free - everything costs 1gp minimum (99% discount)
+            cost = Math.max(1, Math.floor(cost * 0.01));
+        } else if (Environment.SHOP_PRICES === 'reduced') {
+            // Reduced - 50% off
+            cost = Math.max(1, Math.floor(cost * 0.5));
+        }
+        
+        state.pushInt(cost);
     },
 
     [ScriptOpcode.OC_TRADEABLE]: state => {

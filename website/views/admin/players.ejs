@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Player Management - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header .user-info {
+            color: #fff;
+            margin-top: 10px;
+        }
+        
+        .nav {
+            background: #2a2a2a;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .nav a {
+            display: inline-block;
+            padding: 15px;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.3s;
+        }
+        
+        .nav a:hover {
+            background: #3a3a3a;
+        }
+        
+        .nav a.active {
+            background: #444;
+            border-bottom: 3px solid #ffd700;
+        }
+        
+        .container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .search-bar {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+        }
+        
+        .search-bar button {
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .search-bar button:hover {
+            background: #ffed4e;
+        }
+        
+        .player-table {
+            background: #2a2a2a;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #1a1a1a;
+            padding: 15px;
+            text-align: left;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #444;
+        }
+        
+        tr:hover {
+            background: #333;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-online {
+            background: #4CAF50;
+            color: #fff;
+        }
+        
+        .badge-banned {
+            background: #f44336;
+            color: #fff;
+        }
+        
+        .badge-muted {
+            background: #ff9800;
+            color: #fff;
+        }
+        
+        .badge-staff {
+            background: #ffd700;
+            color: #1a1a1a;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+        
+        .btn-ban {
+            background: #f44336;
+        }
+        
+        .btn-mute {
+            background: #ff9800;
+        }
+        
+        .btn-unmute {
+            background: #4CAF50;
+        }
+        
+        .btn-promote {
+            background: #2196F3;
+        }
+        
+        .logout {
+            float: right;
+            background: #ff4444;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        
+        .logout:hover {
+            background: #ff6666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-content {
+            background: #2a2a2a;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px;
+            border-radius: 10px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/logout" class="logout">Logout</a>
+        <h1>👥 Player Management</h1>
+        <div class="user-info">
+            Logged in as: <strong><%= user.username %></strong> 
+            (<%= user.staffmodlevel >= 4 ? 'Developer' : user.staffmodlevel >= 3 ? 'Admin' : 'Moderator' %>)
+        </div>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin">📊 Dashboard</a>
+        <a href="/admin/players" class="active">👥 Players</a>
+        <a href="/admin/bans">🔨 Bans & Mutes</a>
+        <a href="/admin/reports">⚠️ Reports</a>
+        <a href="/admin/chat">💬 Chat Logs</a>
+        <a href="/admin/mod_logs">📝 Mod Logs</a>
+        <a href="/admin/settings">⚙️ Settings</a>
+        <a href="/admin/news">📰 News</a>
+        <a href="/admin/content">🎨 Content</a>
+        <a href="/">🏠 Back to Site</a>
+    </div>
+    
+    <div class="container">
+        <div class="search-bar">
+            <form method="GET" action="/admin/players" style="display: flex; gap: 10px; flex: 1;">
+                <input type="text" name="search" placeholder="Search by username..." value="<%= search %>">
+                <button type="submit">Search</button>
+            </form>
+            <button onclick="showCreateModal()" class="btn" style="background: #4CAF50;">➕ Create Account</button>
+        </div>
+        
+        <div class="player-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Staff Level</th>
+                        <th>Registration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (players && players.length > 0) { %>
+                        <% players.forEach(player => { %>
+                            <tr>
+                                <td>#<%= player.id %></td>
+                                <td>
+                                    <strong><%= player.username %></strong>
+                                    <% if (player.logged_in > 0) { %>
+                                        <span class="badge badge-online">ONLINE</span>
+                                    <% } %>
+                                    <% if (player.banned_until && new Date(player.banned_until) > new Date()) { %>
+                                        <span class="badge badge-banned">BANNED</span>
+                                    <% } %>
+                                    <% if (player.muted_until && new Date(player.muted_until) > new Date()) { %>
+                                        <span class="badge badge-muted">MUTED</span>
+                                    <% } %>
+                                    <% if (player.staffmodlevel > 0) { %>
+                                        <span class="badge badge-staff">STAFF</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%= player.logged_in > 0 ? 'Online' : 'Offline' %>
+                                </td>
+                                <td>
+                                    <%= player.staffmodlevel == 0 ? 'Player' : 
+                                        player.staffmodlevel == 1 ? 'Helper' :
+                                        player.staffmodlevel == 2 ? 'Moderator' :
+                                        player.staffmodlevel == 3 ? 'Admin' : 'Developer' %>
+                                </td>
+                                <td><%= player.registration_date || 'Unknown' %></td>
+                                <td>
+                                    <div class="actions">
+                                        <% if (hasPermission('ban_players')) { %>
+                                            <% if (!player.banned_until || new Date(player.banned_until) <= new Date()) { %>
+                                                <button class="btn btn-ban" onclick="showBanModal(<%= player.id %>, '<%= player.username %>')">Ban</button>
+                                            <% } else { %>
+                                                <form method="POST" action="/admin/ban" style="display: inline;">
+                                                    <input type="hidden" name="player_id" value="<%= player.id %>">
+                                                    <input type="hidden" name="unban" value="true">
+                                                    <button type="submit" class="btn btn-unmute">Unban</button>
+                                                </form>
+                                            <% } %>
+                                        <% } %>
+                                        
+                                        <% if (hasPermission('mute_players')) { %>
+                                            <% if (!player.muted_until || new Date(player.muted_until) <= new Date()) { %>
+                                                <button class="btn btn-mute" onclick="showMuteModal(<%= player.id %>, '<%= player.username %>')">Mute</button>
+                                            <% } else { %>
+                                                <form method="POST" action="/admin/mute" style="display: inline;">
+                                                    <input type="hidden" name="player_id" value="<%= player.id %>">
+                                                    <input type="hidden" name="unmute" value="true">
+                                                    <button type="submit" class="btn btn-unmute">Unmute</button>
+                                                </form>
+                                            <% } %>
+                                        <% } %>
+                                        
+                                        <% if (user.staffmodlevel >= 3) { %>
+                                            <button class="btn btn-promote" onclick="showPromoteModal(<%= player.id %>, '<%= player.username %>', <%= player.staffmodlevel %>)">Rank</button>
+                                        <% } %>
+                                        
+                                        <% if (user.staffmodlevel >= 4) { %>
+                                            <% if (player.pin_enabled) { %>
+                                                <button class="btn" style="background: #ff9800;" onclick="showPinResetModal(<%= player.id %>, '<%= player.username %>')">Reset PIN</button>
+                                            <% } %>
+                                            <% if (player.id !== user.id) { %>
+                                                <button class="btn btn-ban" onclick="showDeleteModal(<%= player.id %>, '<%= player.username %>')">Delete</button>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No players found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Ban Modal -->
+    <div id="banModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBanModal()">&times;</span>
+            <h2>Ban Player</h2>
+            <form method="POST" action="/admin/ban">
+                <input type="hidden" id="ban_player_id" name="player_id">
+                <p>Banning: <strong id="ban_username"></strong></p>
+                <br>
+                <label>Duration:</label>
+                <select name="duration" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;">
+                    <option value="3600">1 Hour</option>
+                    <option value="86400">1 Day</option>
+                    <option value="604800">1 Week</option>
+                    <option value="2592000">1 Month</option>
+                    <option value="permanent">Permanent</option>
+                </select>
+                <br><br>
+                <label>Reason:</label>
+                <input type="text" name="reason" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;">
+                <br><br>
+                <button type="submit" class="btn btn-ban">Confirm Ban</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Mute Modal -->
+    <div id="muteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMuteModal()">&times;</span>
+            <h2>Mute Player</h2>
+            <form method="POST" action="/admin/mute">
+                <input type="hidden" id="mute_player_id" name="player_id">
+                <p>Muting: <strong id="mute_username"></strong></p>
+                <br>
+                <label>Duration:</label>
+                <select name="duration" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;">
+                    <option value="1800">30 Minutes</option>
+                    <option value="3600">1 Hour</option>
+                    <option value="21600">6 Hours</option>
+                    <option value="86400">1 Day</option>
+                    <option value="604800">1 Week</option>
+                    <option value="permanent">Permanent</option>
+                </select>
+                <br><br>
+                <label>Reason:</label>
+                <input type="text" name="reason" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;">
+                <br><br>
+                <button type="submit" class="btn btn-mute">Confirm Mute</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Promote Modal -->
+    <div id="promoteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePromoteModal()">&times;</span>
+            <h2>Change Player Rank</h2>
+            <form method="POST" action="/admin/promote">
+                <input type="hidden" id="promote_player_id" name="player_id">
+                <p>Changing rank for: <strong id="promote_username"></strong></p>
+                <br>
+                <label>New Rank:</label>
+                <select id="promote_level" name="staffmodlevel" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;">
+                    <option value="0">Player</option>
+                    <option value="2">Moderator</option>
+                    <% if (user.staffmodlevel >= 4) { %>
+                        <option value="4">Developer</option>
+                    <% } %>
+                </select>
+                <br><br>
+                <button type="submit" class="btn btn-promote">Update Rank</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteModal()">&times;</span>
+            <h2>Delete Account</h2>
+            <form method="POST" action="/admin/delete_account">
+                <input type="hidden" id="delete_player_id" name="player_id">
+                <p style="color: #f44336;">⚠️ WARNING: This will permanently delete the account!</p>
+                <p>Account to delete: <strong id="delete_username"></strong></p>
+                <br>
+                <label>Type "DELETE" to confirm:</label>
+                <input type="text" name="confirm" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444;" required>
+                <br><br>
+                <button type="submit" class="btn btn-ban">Delete Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Create Account Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateModal()">&times;</span>
+            <h2>Create New Account</h2>
+            <form method="POST" action="/admin/create_account">
+                <label>Username:</label>
+                <input type="text" name="username" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444; margin-bottom: 10px;" required>
+                
+                <label>Password:</label>
+                <input type="password" name="password" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444; margin-bottom: 10px;" required>
+                
+                <label>Email:</label>
+                <input type="email" name="email" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444; margin-bottom: 10px;" required>
+                
+                <label>Staff Level:</label>
+                <select name="staffmodlevel" style="width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 1px solid #444; margin-bottom: 10px;">
+                    <option value="0">Player</option>
+                    <option value="2">Moderator</option>
+                    <% if (user.staffmodlevel >= 4) { %>
+                        <option value="4">Developer</option>
+                    <% } %>
+                </select>
+                <br><br>
+                <button type="submit" class="btn" style="background: #4CAF50;">Create Account</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- PIN Reset Modal -->
+    <div id="pinResetModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePinResetModal()">&times;</span>
+            <h2>Reset PIN</h2>
+            <form method="POST" action="/admin/reset_pin">
+                <input type="hidden" id="pin_reset_player_id" name="player_id">
+                <p>Are you sure you want to reset the PIN for <strong id="pin_reset_username"></strong>?</p>
+                <p style="color: #ff9800; margin: 10px 0;">⚠️ This will disable PIN security for this account. The user will need to set a new PIN from their profile.</p>
+                <button type="submit" class="btn btn-ban">Reset PIN</button>
+                <button type="button" class="btn" onclick="closePinResetModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function showBanModal(playerId, username) {
+            document.getElementById('ban_player_id').value = playerId;
+            document.getElementById('ban_username').textContent = username;
+            document.getElementById('banModal').style.display = 'block';
+        }
+        
+        function closeBanModal() {
+            document.getElementById('banModal').style.display = 'none';
+        }
+        
+        function showMuteModal(playerId, username) {
+            document.getElementById('mute_player_id').value = playerId;
+            document.getElementById('mute_username').textContent = username;
+            document.getElementById('muteModal').style.display = 'block';
+        }
+        
+        function closeMuteModal() {
+            document.getElementById('muteModal').style.display = 'none';
+        }
+        
+        function showPromoteModal(playerId, username, currentLevel) {
+            document.getElementById('promote_player_id').value = playerId;
+            document.getElementById('promote_username').textContent = username;
+            document.getElementById('promote_level').value = currentLevel;
+            document.getElementById('promoteModal').style.display = 'block';
+        }
+        
+        function closePromoteModal() {
+            document.getElementById('promoteModal').style.display = 'none';
+        }
+        
+        function showDeleteModal(playerId, username) {
+            document.getElementById('delete_player_id').value = playerId;
+            document.getElementById('delete_username').textContent = username;
+            document.getElementById('deleteModal').style.display = 'block';
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+        
+        function showCreateModal() {
+            document.getElementById('createModal').style.display = 'block';
+        }
+        
+        function closeCreateModal() {
+            document.getElementById('createModal').style.display = 'none';
+        }
+        
+        function showPinResetModal(playerId, username) {
+            document.getElementById('pin_reset_player_id').value = playerId;
+            document.getElementById('pin_reset_username').textContent = username;
+            document.getElementById('pinResetModal').style.display = 'block';
+        }
+        
+        function closePinResetModal() {
+            document.getElementById('pinResetModal').style.display = 'none';
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

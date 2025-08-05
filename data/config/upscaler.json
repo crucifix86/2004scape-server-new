@@ -1,10 +1,15 @@
 {
-    "enabled": true,
+    "enabled": false,
     "scale": 4,
     "algorithm": "bezier",
     "sharpen": true,
     "enhance": true,
     "cache": true,
+    "fonts": {
+        "enabled": true,
+        "antiAlias": true,
+        "sharpen": false
+    },
     "textures": {
         "door": { "sharpen": true, "enhance": true },
         "water": { "sharpen": false, "enhance": true, "waterEffect": true },
