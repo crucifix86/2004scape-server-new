@@ -5,7 +5,7 @@
 For a fresh Ubuntu/Debian VPS, simply run:
 
 ```bash
-wget https://raw.githubusercontent.com/YourGithubUsername/2004scape-server/main/install-vps.sh
+wget https://raw.githubusercontent.com/crucifix86/2004scape-server-new/main/install-vps.sh
 chmod +x install-vps.sh
 sudo ./install-vps.sh
 ```
@@ -31,7 +31,7 @@ The installer will:
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/YourGithubUsername/2004scape-server.git
+git clone https://github.com/crucifix86/2004scape-server-new.git
 cd 2004scape-server
 ```
 

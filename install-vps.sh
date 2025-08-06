@@ -64,7 +64,7 @@ if [ -d "2004scape-server" ]; then
     echo "Directory already exists, removing..."
     rm -rf 2004scape-server
 fi
-git clone https://github.com/YourGithubUsername/2004scape-server.git
+git clone https://github.com/crucifix86/2004scape-server-new.git 2004scape-server
 cd 2004scape-server
 
 # Install Node dependencies
