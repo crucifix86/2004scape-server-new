@@ -50,7 +50,7 @@ apt-get upgrade -y
 
 # Install required packages
 echo -e "${GREEN}Installing required packages...${NC}"
-apt-get install -y curl git build-essential apache2 sqlite3 libsqlite3-dev python3 python3-pip
+apt-get install -y curl git build-essential apache2 sqlite3 libsqlite3-dev python3 python3-pip openjdk-17-jre-headless
 
 # Install Node.js 20
 echo -e "${GREEN}Installing Node.js 20...${NC}"
