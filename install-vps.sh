@@ -278,7 +278,7 @@ ufw --force enable
 
 # Create credentials file
 echo -e "${GREEN}Creating credentials file...${NC}"
-cat > /root/2004scape-credentials.txt << EOF
+cat > /home/2004scape-credentials.txt << EOF
 === 2004scape Server Credentials ===
 
 Developer Account:
@@ -308,7 +308,7 @@ echo -e "${GREEN}======================================"
 echo "  Installation Complete!"
 echo "======================================${NC}"
 echo ""
-echo -e "${YELLOW}Your credentials have been saved to: /root/2004scape-credentials.txt${NC}"
+echo -e "${YELLOW}Your credentials have been saved to: /home/2004scape-credentials.txt${NC}"
 echo ""
 echo -e "${GREEN}You can access your server at:${NC}"
 if [[ -n "$DOMAIN_NAME" ]]; then
