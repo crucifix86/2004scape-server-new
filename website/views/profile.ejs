@@ -6,6 +6,7 @@
     <title>My Profile - <%= serverName %></title>
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <style>
         body {
             margin: 0;
@@ -154,6 +155,47 @@
         .pin-disabled {
             background: rgba(255, 0, 0, 0.2);
             color: #f44336;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px;
+            }
+            
+            .content {
+                padding: 10px;
+            }
+            
+            .profile-header h1 {
+                font-size: 24px;
+            }
+            
+            .profile-section {
+                padding: 15px;
+            }
+            
+            .profile-section h2 {
+                font-size: 18px;
+            }
+            
+            .form-group input {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 8px 16px;
+                margin-bottom: 10px;
+            }
+            
+            /* Stack PIN change/disable forms on mobile */
+            .profile-section > div[style*="display: flex"] {
+                display: block !important;
+            }
+            
+            .profile-section > div[style*="display: flex"] > div {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>

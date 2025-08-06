@@ -1,0 +1,436 @@
+/* Mobile-specific styles for 2004Scape */
+
+/* Mobile Navigation */
+.mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 24px;
+    transition: all 0.3s;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: linear-gradient(to bottom, #2c1810, #1a1a1a);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    z-index: 10000;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+.mobile-menu.active {
+    left: 0;
+}
+
+.mobile-menu-header {
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 2px solid #8b4513;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-menu-close {
+    background: transparent;
+    border: none;
+    color: #ffd700;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.mobile-menu-nav {
+    padding: 20px;
+}
+
+.mobile-menu-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-menu-nav li {
+    margin-bottom: 15px;
+}
+
+.mobile-menu-nav a {
+    display: block;
+    padding: 12px 15px;
+    color: #d4af37;
+    text-decoration: none;
+    background: rgba(0,0,0,0.3);
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-size: 16px;
+}
+
+.mobile-menu-nav a:hover,
+.mobile-menu-nav a:active {
+    background: rgba(255, 215, 0, 0.2);
+    transform: translateX(5px);
+}
+
+.mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 9999;
+}
+
+.mobile-menu-overlay.active {
+    display: block;
+}
+
+/* Mobile Layout Adjustments */
+@media (max-width: 768px) {
+    /* Show mobile menu toggle */
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    .mobile-menu {
+        display: block;
+    }
+    
+    /* Hide desktop nav */
+    .nav-bar ul {
+        display: none !important;
+    }
+    
+    /* Adjust header */
+    .fixed-header-content {
+        padding: 0 10px;
+    }
+    
+    .header {
+        padding: 15px !important;
+    }
+    
+    .header h1 {
+        font-size: 28px !important;
+    }
+    
+    .header p {
+        font-size: 14px !important;
+    }
+    
+    /* Adjust main container */
+    body {
+        padding-top: 140px !important;
+    }
+    
+    .main-container {
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Convert grid layouts to single column */
+    .content {
+        grid-template-columns: 1fr !important;
+        padding: 10px !important;
+    }
+    
+    .features {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .server-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Adjust boxes and cards */
+    .box {
+        padding: 12px !important;
+        margin-bottom: 15px;
+    }
+    
+    .box h3 {
+        font-size: 16px !important;
+    }
+    
+    /* Adjust buttons */
+    .play-button {
+        padding: 12px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Forms */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 10px !important;
+    }
+    
+    /* News section */
+    .news-item {
+        padding: 12px !important;
+    }
+    
+    .news-item h4 {
+        font-size: 16px !important;
+    }
+    
+    /* Welcome section */
+    .welcome-section h2 {
+        font-size: 24px !important;
+    }
+    
+    .welcome-section p {
+        font-size: 14px !important;
+    }
+    
+    /* Feature boxes */
+    .feature {
+        padding: 12px !important;
+    }
+    
+    .feature h4 {
+        font-size: 14px !important;
+    }
+    
+    .feature p {
+        font-size: 12px !important;
+    }
+    
+    /* Footer */
+    .main-container > div:last-child {
+        padding: 15px !important;
+        font-size: 12px !important;
+    }
+    
+    /* Sidebar order - show after main content on mobile */
+    .sidebar {
+        order: 2;
+    }
+    
+    .main-content {
+        order: 1;
+    }
+}
+
+/* Smaller mobile devices */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 24px !important;
+    }
+    
+    .header p {
+        font-size: 12px !important;
+    }
+    
+    body {
+        padding-top: 120px !important;
+    }
+    
+    .welcome-section h2 {
+        font-size: 20px !important;
+    }
+    
+    .box h3 {
+        font-size: 14px !important;
+    }
+    
+    .stat-value {
+        font-size: 20px !important;
+    }
+    
+    .play-button {
+        padding: 10px !important;
+        font-size: 14px !important;
+    }
+}
+
+/* Game Client Mobile Styles */
+@media (max-width: 768px) {
+    .game-client {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden;
+        background: #000 !important;
+    }
+    
+    #game {
+        width: 100vw !important;
+        height: 100vh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+    }
+    
+    #canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        object-fit: contain !important;
+    }
+    
+    #controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.95);
+        padding: 15px;
+        margin: 0 !important;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        font-size: 14px !important;
+        border-top: 2px solid #ffd700;
+    }
+    
+    #controls select {
+        font-size: 14px !important;
+        padding: 8px;
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid #ffd700;
+        color: #ffd700;
+    }
+    
+    #controls a {
+        font-size: 14px !important;
+        padding: 8px 15px;
+        background: rgba(255, 215, 0, 0.1);
+        border-radius: 3px;
+        border: 1px solid #ffd700;
+    }
+    
+    /* Hide less important controls on mobile */
+    #controls > a[id="screenshot"],
+    #controls > a[id="hide"] {
+        display: none;
+    }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase tap targets */
+    a, button, input, select, textarea {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .play-button:hover,
+    .mobile-menu-nav a:hover,
+    .feature:hover,
+    .news-item:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Add active states for better feedback */
+    .play-button:active,
+    .mobile-menu-nav a:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+}
+
+/* Landscape orientation adjustments for game client */
+@media (orientation: landscape) and (max-height: 768px) {
+    .game-client {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    #game {
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+    
+    #canvas {
+        width: auto !important;
+        height: 100vh !important;
+        max-width: calc(100vh * 1.486) !important; /* Maintain aspect ratio 789/532 */
+        margin: 0 auto;
+    }
+    
+    #controls {
+        padding: 10px !important;
+        gap: 15px !important;
+    }
+    
+    /* Smaller controls in landscape */
+    #controls {
+        padding: 5px !important;
+        font-size: 10px !important;
+    }
+    
+    #controls a, #controls select {
+        font-size: 10px !important;
+        padding: 3px 6px !important;
+    }
+}
+
+/* Landscape orientation adjustments for regular pages */
+@media (max-width: 768px) and (orientation: landscape) and (max-height: 500px) {
+    body:not(.game-client) {
+        padding-top: 100px !important;
+    }
+    
+    .header {
+        padding: 10px !important;
+    }
+    
+    .header h1 {
+        font-size: 20px !important;
+    }
+    
+    .header p {
+        display: none;
+    }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .mobile-menu {
+        border-right: 1px solid #8b4513;
+    }
+    
+    input, select, textarea {
+        border-width: 1px;
+    }
+}
+
+/* Safe area adjustments for notched devices */
+@supports (padding: max(0px)) {
+    .mobile-menu {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    .mobile-menu-header {
+        padding-top: max(20px, env(safe-area-inset-top));
+    }
+    
+    #controls {
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+}

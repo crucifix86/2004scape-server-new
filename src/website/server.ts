@@ -381,6 +381,7 @@ export function createWebsiteServer() {
     // Serve static files
     app.use('/css', express.static(path.join(__dirname, '../../website/css')));
     app.use('/img', express.static(path.join(__dirname, '../../website/img')));
+    app.use('/js', express.static(path.join(__dirname, '../../website/js')));
     app.use('/uploads', express.static(path.join(__dirname, '../../website/uploads')));
     app.use(express.static(path.join(__dirname, '../../website')));
     

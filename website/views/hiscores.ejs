@@ -6,6 +6,7 @@
     <title><%= content.site_title || '2004Scape' %> - Hiscores</title>
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <style>
         body {
             margin: 0;
@@ -144,6 +145,56 @@
             position: static !important;
             transform: none !important;
             filter: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px !important;
+            }
+            
+            .content {
+                padding: 10px !important;
+            }
+            
+            h2 {
+                font-size: 24px !important;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 14px;
+                margin: 2px;
+            }
+            
+            .hiscores-table {
+                border-width: 2px;
+                overflow-x: auto;
+            }
+            
+            table {
+                font-size: 14px;
+                min-width: 600px;
+            }
+            
+            th, td {
+                padding: 8px !important;
+            }
+            
+            th {
+                font-size: 12px !important;
+            }
+            
+            .rank {
+                font-size: 16px;
+            }
+            
+            /* Hide less important columns on very small screens */
+            @media (max-width: 480px) {
+                th:nth-child(5), td:nth-child(5),
+                th:nth-child(6), td:nth-child(6) {
+                    display: none;
+                }
+            }
         }
     </style>
 </head>

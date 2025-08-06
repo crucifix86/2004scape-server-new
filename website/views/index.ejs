@@ -6,6 +6,7 @@
     <title><%= content.site_title || serverName %> - <%= content.site_tagline || 'Relive RuneScape 2004' %></title>
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <style>
         body {
             margin: 0;
@@ -435,5 +436,49 @@
             <%= content.footer_text || 'Copyright © 2024 2004Scape - All Rights Reserved' %>
         </div>
     </div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <h3 style="color: #ffd700; margin: 0;">Menu</h3>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <ul>
+                <li><a href="/">🏠 Home</a></li>
+                <li><a href="/hiscores">🏆 Hiscores</a></li>
+                <% if (user) { %>
+                    <li><a href="/profile">👤 My Profile</a></li>
+                    <% if (user.staffmodlevel >= 2) { %>
+                        <li><a href="/admin">🛡️ Admin Panel</a></li>
+                    <% } %>
+                    <li><a href="/logout">🚪 Logout</a></li>
+                <% } else { %>
+                    <li><a href="/login">🔑 Login</a></li>
+                    <li><a href="/register">📝 Register</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+    
+    <script>
+        function toggleMobileMenu() {
+            document.querySelector('.mobile-menu').classList.add('active');
+            document.querySelector('.mobile-menu-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            document.querySelector('.mobile-menu').classList.remove('active');
+            document.querySelector('.mobile-menu-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close menu when clicking a link
+        document.querySelectorAll('.mobile-menu-nav a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    </script>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <title>2004Scape Game</title>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.7">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <style>
         html {
@@ -38,7 +38,7 @@
             width: 1183px;
             height: 798px;
             display: block;
-            /* touch-action: none; */
+            touch-action: none;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -47,7 +47,8 @@
             user-select: none;
             outline: none;
             -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-            z-index: -1;
+            position: relative;
+            z-index: 1;
         }
 
         html:-webkit-full-screen {
@@ -92,6 +93,93 @@
 
         #mobilekeyboard-container {
             display: none;
+        }
+        
+        /* Mobile portrait - use full screen height */
+        @media (max-width: 768px) and (orientation: portrait) {
+            body {
+                margin: 0;
+                padding: 0;
+                background: #000;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            center {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            #game {
+                padding: 0;
+                margin: 0;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            canvas {
+                /* Calculate dimensions to maintain aspect ratio */
+                --canvas-height: calc(100vh - 50px);
+                --canvas-width: calc((100vh - 50px) * 1.486); /* 789/532 = 1.486 */
+                
+                height: var(--canvas-height) !important;
+                width: var(--canvas-width) !important;
+                max-width: 100vw !important;
+                
+                /* If width would exceed viewport, scale by width instead */
+                @supports (width: min(100vw, var(--canvas-width))) {
+                    width: min(100vw, var(--canvas-width)) !important;
+                    height: calc(min(100vw, var(--canvas-width)) / 1.486) !important;
+                }
+                
+                /* Ensure touch events work correctly */
+                touch-action: none;
+                pointer-events: auto;
+            }
+            
+            #controls {
+                background: rgba(0, 0, 0, 0.95);
+                padding: 8px 5px;
+                font-size: 12px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                align-items: center;
+                height: 50px;
+            }
+            
+            /* Hide less important items */
+            #controls > span,
+            #controls a[id="screenshot"],
+            #controls a[id="hide"],
+            #controls select[id="filtering"] {
+                display: none !important;
+            }
+        }
+        
+        /* Mobile landscape - use full width */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                margin: 0;
+                padding: 0;
+                background: #000;
+            }
+            
+            canvas {
+                width: 100vw !important;
+                height: auto !important;
+                max-height: calc(100vh - 40px) !important;
+            }
+            
+            #controls {
+                padding: 5px;
+                font-size: 10px;
+                height: 40px;
+            }
         }
 
     </style>

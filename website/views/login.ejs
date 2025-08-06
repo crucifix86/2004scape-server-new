@@ -6,6 +6,7 @@
     <title>Login - 2004Scape</title>
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mobile.css">
     <style>
         body {
             margin: 0;
@@ -123,6 +124,30 @@
         
         .links a:hover {
             color: #ffd700;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .login-container {
+                width: 100%;
+                max-width: 400px;
+                padding: 30px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 28px;
+            }
+            
+            .form-group input {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .login-button {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
