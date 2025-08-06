@@ -1,5 +1,3 @@
 # Developer usernames (one per line)
 # These users will have access to dev-only features
-crucifix
-admin
-dev
+# Add your username here

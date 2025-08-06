@@ -1,0 +1,30 @@
+MANUAL APACHE SETUP INSTRUCTIONS
+================================
+
+Run these commands as root or with sudo:
+
+1. Enable Apache modules:
+   sudo a2enmod proxy proxy_http proxy_wstunnel rewrite headers
+
+2. Copy the configuration file:
+   sudo cp /home/crucifix/2004scape-server/2004scape-apache.conf /etc/apache2/sites-available/2004scape.conf
+
+3. Disable the default site:
+   sudo a2dissite 000-default
+
+4. Enable the 2004scape site:
+   sudo a2ensite 2004scape
+
+5. Test the configuration:
+   sudo apache2ctl configtest
+
+6. Restart Apache:
+   sudo systemctl restart apache2
+
+7. Check if it's working:
+   curl http://localhost/
+
+TROUBLESHOOTING:
+- Check Apache logs: sudo tail -f /var/log/apache2/error.log
+- Check if your Node.js app is running on port 8888
+- Make sure firewall allows port 80: sudo ufw allow 80/tcp

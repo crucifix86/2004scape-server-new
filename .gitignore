@@ -40,6 +40,8 @@ PreloadedDirs.ts
 
 db.sqlite
 db.sqlite-journal
+db.sqlite.backup_*
+data/website.db
 
 # coverage reports
 coverage/
@@ -60,3 +62,20 @@ Thumbs.db
 ### macOS ###
 .DS_Store
 ._*
+
+### Logs and PIDs ###
+*.log
+*.pid
+server_*.log
+login_*.log
+
+### Temporary files ###
+*.tmp
+*.temp
+*.backup
+*.stable_backup
+
+### User data ###
+data/saves/
+sync-game-accounts.js
+clean-database.js
