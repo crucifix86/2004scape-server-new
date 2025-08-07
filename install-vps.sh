@@ -84,103 +84,23 @@ EOF
 
 # Initialize database
 echo -e "${GREEN}Initializing database...${NC}"
-# Create database initialization script
-cat > init-db.mjs << EOFDB
-import Database from 'better-sqlite3';
-import bcrypt from 'bcrypt';
-import fs from 'fs';
+# Copy template database
+cp db-template.sqlite db.sqlite
 
+# Add developer account
+node -e "
+const Database = require('better-sqlite3');
+const bcrypt = require('bcrypt');
 const db = new Database('db.sqlite');
-
-// Create account table
-db.exec(`
-    CREATE TABLE IF NOT EXISTS account (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        registration_ip TEXT,
-        registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-        logged_in INTEGER DEFAULT 0,
-        login_time DATETIME,
-        logged_out INTEGER DEFAULT 0,
-        logout_time DATETIME,
-        muted_until DATETIME,
-        banned_until DATETIME,
-        staffmodlevel INTEGER DEFAULT 0,
-        members INTEGER DEFAULT 0,
-        email TEXT,
-        password_updated DATETIME,
-        oauth_provider TEXT,
-        pin TEXT,
-        pin_enabled INTEGER DEFAULT 0
-    )
-`);
-
-// Create hiscores table
-db.exec(`
-    CREATE TABLE IF NOT EXISTS hiscores (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        account_id INTEGER,
-        username TEXT,
-        rights INTEGER DEFAULT 0,
-        total_xp BIGINT DEFAULT 0,
-        total_level INTEGER DEFAULT 0,
-        last_update DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (account_id) REFERENCES account(id)
-    )
-`);
-
-// Add skill columns
-const skills = [
-    'attack', 'defence', 'strength', 'hitpoints', 'ranged', 'prayer', 
-    'magic', 'cooking', 'woodcutting', 'fletching', 'fishing', 'firemaking',
-    'crafting', 'smithing', 'mining', 'herblore', 'agility', 'thieving',
-    'slayer', 'farming', 'runecraft', 'hunter', 'construction'
-];
-
-for (const skill of skills) {
-    db.exec(`ALTER TABLE hiscores ADD COLUMN \${skill}_xp INTEGER DEFAULT 0`);
-    db.exec(`ALTER TABLE hiscores ADD COLUMN \${skill}_level INTEGER DEFAULT 1`);
-}
-
-// Create settings table
-db.exec(`
-    CREATE TABLE IF NOT EXISTS settings (
-        key TEXT PRIMARY KEY,
-        value TEXT,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-`);
-
-// Insert default settings
-const settings = [
-    ['xp_rate', '10'],
-    ['drop_rate', '10'],
-    ['max_players', '2000'],
-    ['starting_gold', '20999'],
-    ['shop_prices', 'normal'],
-    ['registration_enabled', 'true']
-];
-
-const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-for (const [key, value] of settings) {
-    stmt.run(key, value);
-}
-
-// Create developer account
 const hashedPassword = bcrypt.hashSync('${DEV_PASSWORD}'.toLowerCase(), 10);
-db.prepare(`
-    INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel)
-    VALUES (?, ?, ?, ?, datetime('now'), ?)
-`).run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
-
-console.log('Database initialized successfully');
+try {
+    db.prepare('INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel) VALUES (?, ?, ?, ?, datetime(\"now\"), ?)').run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
+    console.log('Developer account created');
+} catch (err) {
+    console.log('Error creating account: ' + err.message);
+}
 db.close();
-EOFDB
-
-# Run the initialization script
-node init-db.mjs
-rm init-db.mjs
+"
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
