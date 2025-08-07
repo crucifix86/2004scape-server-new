@@ -88,19 +88,23 @@ echo -e "${GREEN}Initializing database...${NC}"
 cp db-template.sqlite db.sqlite
 
 # Add developer account
-node -e "
+cat > create-dev-account.js << EOF
 const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
 const db = new Database('db.sqlite');
-const hashedPassword = bcrypt.hashSync('${DEV_PASSWORD}'.toLowerCase(), 10);
+const username = '${DEV_USERNAME}';
+const password = '${DEV_PASSWORD}';
+const hashedPassword = bcrypt.hashSync(password.toLowerCase(), 10);
 try {
-    db.prepare('INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel) VALUES (?, ?, ?, ?, datetime(\"now\"), ?)').run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
-    console.log('Developer account created');
+    db.prepare('INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel) VALUES (?, ?, ?, ?, datetime("now"), ?)').run(username, hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
+    console.log('Developer account created: ' + username);
 } catch (err) {
     console.log('Error creating account: ' + err.message);
 }
 db.close();
-"
+EOF
+node create-dev-account.js
+rm create-dev-account.js
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
