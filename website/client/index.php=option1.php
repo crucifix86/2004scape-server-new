@@ -37,7 +37,7 @@
     </div>
 </div>
 </center><br>
-<center><iframe id="gameFrame" src="http://localhost:8080/rs2.cgi?lowmem=0&plugin=0" width="800" height="600" style="border: 2px solid #333;" allowfullscreen></iframe></center>
+<center><iframe id="gameFrame" src="/rs2.cgi?lowmem=0&plugin=0" width="800" height="600" style="border: 2px solid #333;" allowfullscreen></iframe></center>
 </div>
 <br>
 <div class="tandc">Copyright &copy; 2012 BrainScape - All Rights Reserve<br>
