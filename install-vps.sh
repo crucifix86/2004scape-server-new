@@ -85,7 +85,7 @@ EOF
 # Initialize database
 echo -e "${GREEN}Initializing database...${NC}"
 # Create database initialization script
-cat > init-db.mjs << 'EOFDB'
+cat > init-db.mjs << EOFDB
 import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
@@ -93,7 +93,7 @@ import fs from 'fs';
 const db = new Database('db.sqlite');
 
 // Create account table
-db.exec(\`
+db.exec(`
     CREATE TABLE IF NOT EXISTS account (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
@@ -114,10 +114,10 @@ db.exec(\`
         pin TEXT,
         pin_enabled INTEGER DEFAULT 0
     )
-\`);
+`);
 
 // Create hiscores table
-db.exec(\`
+db.exec(`
     CREATE TABLE IF NOT EXISTS hiscores (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         account_id INTEGER,
@@ -128,7 +128,7 @@ db.exec(\`
         last_update DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (account_id) REFERENCES account(id)
     )
-\`);
+`);
 
 // Add skill columns
 const skills = [
@@ -139,18 +139,18 @@ const skills = [
 ];
 
 for (const skill of skills) {
-    db.exec(\`ALTER TABLE hiscores ADD COLUMN \${skill}_xp INTEGER DEFAULT 0\`);
-    db.exec(\`ALTER TABLE hiscores ADD COLUMN \${skill}_level INTEGER DEFAULT 1\`);
+    db.exec(`ALTER TABLE hiscores ADD COLUMN \${skill}_xp INTEGER DEFAULT 0`);
+    db.exec(`ALTER TABLE hiscores ADD COLUMN \${skill}_level INTEGER DEFAULT 1`);
 }
 
 // Create settings table
-db.exec(\`
+db.exec(`
     CREATE TABLE IF NOT EXISTS settings (
         key TEXT PRIMARY KEY,
         value TEXT,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-\`);
+`);
 
 // Insert default settings
 const settings = [
@@ -169,10 +169,10 @@ for (const [key, value] of settings) {
 
 // Create developer account
 const hashedPassword = bcrypt.hashSync('${DEV_PASSWORD}'.toLowerCase(), 10);
-db.prepare(\`
+db.prepare(`
     INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel)
     VALUES (?, ?, ?, ?, datetime('now'), ?)
-\`).run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
+`).run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
 
 console.log('Database initialized successfully');
 db.close();
