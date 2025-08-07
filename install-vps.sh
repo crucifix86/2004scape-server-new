@@ -85,8 +85,10 @@ LOGIN_SERVER=true
 NODE_ENV=production
 EOF
 
-# Skip database initialization - let the server create it on first run
-echo -e "${GREEN}Database will be initialized on first server start...${NC}"
+# Initialize database
+echo -e "${GREEN}Initializing database...${NC}"
+# Run the setup script that already exists
+npm run setup
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
