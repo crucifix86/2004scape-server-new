@@ -271,6 +271,7 @@ systemctl start 2004scape
 
 # Configure firewall
 echo -e "${GREEN}Configuring firewall...${NC}"
+ufw allow 22/tcp
 ufw allow 80/tcp
 ufw allow 43594/tcp
 ufw allow 43500/tcp
