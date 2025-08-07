@@ -87,8 +87,8 @@ EOF
 
 # Initialize database
 echo -e "${GREEN}Initializing database...${NC}"
-# Run the setup script that already exists
-npm run setup
+# Just create an empty database file - the server will initialize it
+touch db.sqlite
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
