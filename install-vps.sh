@@ -73,12 +73,9 @@ npm install
 
 # Create .env file
 echo -e "${GREEN}Creating configuration file...${NC}"
-if [ -f ".env.example" ]; then
-    cp .env.example .env
-else
-    touch .env
-fi
-cat > .env << EOF
+cp .env.example .env
+cat >> .env << EOF
+
 # VPS Configuration
 BUILD_VERIFY=false
 LOGIN_SERVER=true
@@ -87,8 +84,89 @@ EOF
 
 # Initialize database
 echo -e "${GREEN}Initializing database...${NC}"
-# Just create an empty database file - the server will initialize it
-touch db.sqlite
+# Create initial database structure
+node -e "
+import Database from 'better-sqlite3';
+import bcrypt from 'bcrypt';
+import fs from 'fs';
+
+const db = new Database('db.sqlite');
+
+// Create account table
+db.exec(\`
+    CREATE TABLE IF NOT EXISTS account (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        email TEXT,
+        registration_ip TEXT,
+        registration_date DATETIME,
+        staffmodlevel INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+\`);
+
+// Create hiscores table
+db.exec(\`
+    CREATE TABLE IF NOT EXISTS hiscores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER,
+        username TEXT,
+        rights INTEGER DEFAULT 0,
+        total_xp BIGINT DEFAULT 0,
+        total_level INTEGER DEFAULT 0,
+        last_update DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (account_id) REFERENCES account(id)
+    )
+\`);
+
+// Add skill columns
+const skills = [
+    'attack', 'defence', 'strength', 'hitpoints', 'ranged', 'prayer', 
+    'magic', 'cooking', 'woodcutting', 'fletching', 'fishing', 'firemaking',
+    'crafting', 'smithing', 'mining', 'herblore', 'agility', 'thieving',
+    'slayer', 'farming', 'runecraft', 'hunter', 'construction'
+];
+
+for (const skill of skills) {
+    db.exec(\`ALTER TABLE hiscores ADD COLUMN \${skill}_xp INTEGER DEFAULT 0\`);
+    db.exec(\`ALTER TABLE hiscores ADD COLUMN \${skill}_level INTEGER DEFAULT 1\`);
+}
+
+// Create settings table
+db.exec(\`
+    CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+\`);
+
+// Insert default settings
+const settings = [
+    ['xp_rate', '10'],
+    ['drop_rate', '10'],
+    ['max_players', '2000'],
+    ['starting_gold', '20999'],
+    ['shop_prices', 'normal'],
+    ['registration_enabled', 'true']
+];
+
+const stmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
+for (const [key, value] of settings) {
+    stmt.run(key, value);
+}
+
+// Create developer account
+const hashedPassword = bcrypt.hashSync('${DEV_PASSWORD}'.toLowerCase(), 10);
+db.prepare(\`
+    INSERT INTO account (username, password, email, registration_ip, registration_date, staffmodlevel)
+    VALUES (?, ?, ?, ?, datetime('now'), ?)
+\`).run('${DEV_USERNAME}', hashedPassword, 'admin@2004scape.com', '127.0.0.1', 2);
+
+console.log('Database initialized successfully');
+db.close();
+"
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
@@ -97,9 +175,6 @@ echo "${DEV_USERNAME}" >> data/developers.txt
 # Build the project
 echo -e "${GREEN}Building the project...${NC}"
 npm run build
-
-# Make server script executable
-chmod +x server
 
 # Configure Apache
 echo -e "${GREEN}Configuring Apache...${NC}"
@@ -178,7 +253,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/opt/2004scape-server
-ExecStart=/bin/bash /opt/2004scape-server/server start
+ExecStart=/usr/bin/npm run dev
 Restart=always
 RestartSec=10
 StandardOutput=append:/opt/2004scape-server/server.log
