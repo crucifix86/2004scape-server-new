@@ -84,8 +84,8 @@ EOF
 
 # Initialize database
 echo -e "${GREEN}Initializing database...${NC}"
-# Create initial database structure
-node -e "
+# Create database initialization script
+cat > init-db.mjs << 'EOFDB'
 import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt';
 import fs from 'fs';
@@ -96,13 +96,23 @@ const db = new Database('db.sqlite');
 db.exec(\`
     CREATE TABLE IF NOT EXISTS account (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
+        username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        email TEXT,
         registration_ip TEXT,
-        registration_date DATETIME,
+        registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        logged_in INTEGER DEFAULT 0,
+        login_time DATETIME,
+        logged_out INTEGER DEFAULT 0,
+        logout_time DATETIME,
+        muted_until DATETIME,
+        banned_until DATETIME,
         staffmodlevel INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        members INTEGER DEFAULT 0,
+        email TEXT,
+        password_updated DATETIME,
+        oauth_provider TEXT,
+        pin TEXT,
+        pin_enabled INTEGER DEFAULT 0
     )
 \`);
 
@@ -166,7 +176,11 @@ db.prepare(\`
 
 console.log('Database initialized successfully');
 db.close();
-"
+EOFDB
+
+# Run the initialization script
+node init-db.mjs
+rm init-db.mjs
 
 # Add developer to developers.txt
 echo -e "${GREEN}Adding developer to developers list...${NC}"
